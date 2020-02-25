@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: tmds-exporter
+  namespace: tmds-exporter
+  labels:
+    productName: tmselabs
+    projectName: tmds-exporter
+    appName: tmds-exporter
+    createdBy: aon-se
+spec:
+  selector:
+    productName: tmselabs
+    projectName: tmds-exporter
+    appName: tmds-exporter
+    createdBy: aon-se
+  ports:
+    - port: 9090
+      targetPort: 9090
+  type: ClusterIP

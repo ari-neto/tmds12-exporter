@@ -2,7 +2,7 @@ FROM python:3-slim
 
 COPY requirements.txt /usr/src/app/
 COPY src/libraries /usr/src/app/src/libraries
-COPY src/app.py /usr/src/app/src/
+COPY src/collector.py /usr/src/app/src/
 COPY src/__init__.py /usr/src/app/src/
 COPY src/config_sample.py /usr/src/app/src/config.py
 COPY third_party /usr/src/app/third_party
