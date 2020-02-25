@@ -64,10 +64,12 @@ def get_summary(max_time=60):
         if summary['timestamp'] != 0:
             delta_time =  delta_date(summary['timestamp'])
         else:
-            return ds_summary()
+            summary = ds_summary()
+            return summary
         if delta_time >= max_time:
             print('not_valid_delta_date_seconds: {}'.format(delta_time))
-            return ds_summary()
+            summary = ds_summary()
+            return summary
         else:
             print('valid_delta_date_seconds: {}'.format(delta_time))
             return summary
