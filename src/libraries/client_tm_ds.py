@@ -31,6 +31,8 @@ api_version = environ.get("DS_API_VERSION", default=config.DS_API_VERSION)
 # Variables for Settings examples
 settings_policy_id = 9
 
+summary = { 'timestamp': 0 }
+
 def check_none_int(item):
     try:
         if item is not None:
@@ -59,7 +61,10 @@ def delta_date(date):
 def get_summary(max_time=60):
     global summary
     try:
-        delta_time =  delta_date(summary['timestamp'])
+        if summary['timestamp'] != 0:
+            delta_time =  delta_date(summary['timestamp'])
+        else:
+            return ds_summary()
         if delta_time >= max_time:
             print('not_valid_delta_date_seconds: {}'.format(delta_time))
             return ds_summary()
@@ -240,7 +245,7 @@ def ds_summary():
         except Exception as e:
             print(e)
 
-        print("-------------------------------------------------------")
+        # print("-------------------------------------------------------")
 
     message = "I am giving you a summary of your environment protected by Trend Micro Security Platform:\n" \
                 "total computers: {}\n" \
@@ -358,7 +363,7 @@ def ds_summary():
 
     return summary
 
-summary = ds_summary()
+summary = get_summary()
 
 def main():
     ''' Run the examples from the Create and Configure Policies guide

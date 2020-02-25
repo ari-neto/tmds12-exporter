@@ -21,7 +21,7 @@ case "$1" in
     deploy)
         figlet "deploy"
         echo " "
-        kubectl delete pod $(kubectl get pods -n tmds-exporter --no-headers=true|awk '{ print $1}') -n ferryman
+        kubectl delete pod $(kubectl get pods -n tmds-exporter --no-headers=true|grep -i tmds-exporter|awk '{ print $1}') -n tmds-exporter
         echo " "
         ;;
     ci)
