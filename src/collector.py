@@ -26,6 +26,22 @@ class CustomCollector(object):
     def collect(self):
         ds_metrics = ds.get_summary(ds_api_check)
 
+        vulnerabilities_exposed = int(ds_metrics['vulnerabilities_detected']) - int(ds_metrics['vulnerabilities_protected'])
+        vulnerabilities_exposed_windows = int(ds_metrics['vulnerabilities_detected_windows']) - int(ds_metrics['vulnerabilities_protected_windows'])
+        vulnerabilities_exposed_linux = int(ds_metrics['vulnerabilities_detected_linux']) - int(ds_metrics['vulnerabilities_protected_linux'])
+        vulnerabilities_exposed_unknown = int(ds_metrics['vulnerabilities_detected_unknown']) - int(ds_metrics['vulnerabilities_protected_unknown'])
+
+        vulnerabilities_exposed_windows_online = int(ds_metrics['vulnerabilities_detected_windows_online']) - int(ds_metrics['vulnerabilities_protected_windows_online'])
+        vulnerabilities_exposed_linux_online = int(ds_metrics['vulnerabilities_detected_linux_online']) - int(ds_metrics['vulnerabilities_protected_linux_online'])
+        vulnerabilities_exposed_unknown_online = int(ds_metrics['vulnerabilities_detected_unknown_online']) - int(ds_metrics['vulnerabilities_protected_unknown_online'])
+
+        vulnerabilities_exposed_windows_offline = int(ds_metrics['vulnerabilities_detected_windows_offline']) - int(ds_metrics['vulnerabilities_protected_windows_offline'])
+        vulnerabilities_exposed_linux_offline = int(ds_metrics['vulnerabilities_detected_linux_offline']) - int(ds_metrics['vulnerabilities_protected_linux_offline'])
+        vulnerabilities_exposed_unknown_offline = int(ds_metrics['vulnerabilities_detected_unknown_offline']) - int(ds_metrics['vulnerabilities_protected_unknown_offline'])
+
+        vulnerabilities_exposed_online = vulnerabilities_exposed_windows_online + vulnerabilities_exposed_linux_online + vulnerabilities_exposed_unknown_online 
+        vulnerabilities_exposed_offline = vulnerabilities_exposed_windows_offline + vulnerabilities_exposed_linux_offline + vulnerabilities_exposed_unknown_offline 
+
         tm_ds = CounterMetricFamily('deep_security', 'Deep Security Computer Metrics', labels=['metric','type','status','platform','mode'])
         tm_ds.add_metric(['computers','all','all','all','all'], int(ds_metrics['total']))
         tm_ds.add_metric(['computers','managed','all','all','all'], int(ds_metrics['managed_count']))
@@ -53,7 +69,7 @@ class CustomCollector(object):
         tm_ds.add_metric(['vulnerabilities','protected','all','all','all'], int(ds_metrics['vulnerabilities_protected']))
         tm_ds.add_metric(['vulnerabilities','protected','online','all','all'], int(ds_metrics['vulnerabilities_protected_windows_online'])+ int(ds_metrics['vulnerabilities_protected_linux_online'])+ int(ds_metrics['vulnerabilities_detected_unknown_online']))
         tm_ds.add_metric(['vulnerabilities','protected','offline','all','all'], int(ds_metrics['vulnerabilities_protected_windows_offline'])+ int(ds_metrics['vulnerabilities_protected_linux_offline'])+ int(ds_metrics['vulnerabilities_detected_unknown_offline']))
-        tm_ds.add_metric(['vulnerabilities','exposed','all','all','all'], int(ds_metrics['vulnerabilities_detected'] - int(ds_metrics['vulnerabilities_protected'])))
+        tm_ds.add_metric(['vulnerabilities','exposed','all','all','all'], vulnerabilities_exposed)
         tm_ds.add_metric(['vulnerabilities','protected','all','all','inline'], int(ds_metrics['vulnerabilities_protected_inline']))
         tm_ds.add_metric(['vulnerabilities','protected','all','all','tap'], int(ds_metrics['vulnerabilities_protected_tap']))
         tm_ds.add_metric(['vulnerabilities','detected','all','windows','all'], int(ds_metrics['vulnerabilities_detected_windows']))
@@ -62,29 +78,30 @@ class CustomCollector(object):
         tm_ds.add_metric(['vulnerabilities','detected','offline','windows','all'], int(ds_metrics['vulnerabilities_detected_windows_offline']))
         tm_ds.add_metric(['vulnerabilities','protected','online','windows','all'], int(ds_metrics['vulnerabilities_protected_windows_online']))
         tm_ds.add_metric(['vulnerabilities','protected','offline','windows','all'], int(ds_metrics['vulnerabilities_protected_windows_offline']))
-        tm_ds.add_metric(['vulnerabilities','exposed','all','windows','all'], int(ds_metrics['vulnerabilities_detected_windows'] - int(ds_metrics['vulnerabilities_protected_windows'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','online','windows','all'], int(ds_metrics['vulnerabilities_detected_windows_online'] - int(ds_metrics['vulnerabilities_protected_windows_online'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','offline','windows','all'], int(ds_metrics['vulnerabilities_detected_windows_offline'] - int(ds_metrics['vulnerabilities_protected_windows_offline'])))
+        tm_ds.add_metric(['vulnerabilities','exposed','all','windows','all'], vulnerabilities_exposed_windows)
+        tm_ds.add_metric(['vulnerabilities','exposed','online','windows','all'], vulnerabilities_exposed_windows_online)
+        tm_ds.add_metric(['vulnerabilities','exposed','offline','windows','all'], vulnerabilities_exposed_windows_offline)
         tm_ds.add_metric(['vulnerabilities','detected','all','linux','all'], int(ds_metrics['vulnerabilities_detected_linux']))
         tm_ds.add_metric(['vulnerabilities','protected','all','linux','all'], int(ds_metrics['vulnerabilities_protected_linux']))
         tm_ds.add_metric(['vulnerabilities','detected','online','linux','all'], int(ds_metrics['vulnerabilities_detected_linux_online']))
         tm_ds.add_metric(['vulnerabilities','detected','offline','linux','all'], int(ds_metrics['vulnerabilities_detected_linux_offline']))
         tm_ds.add_metric(['vulnerabilities','protected','online','linux','all'], int(ds_metrics['vulnerabilities_protected_linux_online']))
         tm_ds.add_metric(['vulnerabilities','protected','offline','linux','all'], int(ds_metrics['vulnerabilities_protected_linux_offline']))
-        tm_ds.add_metric(['vulnerabilities','exposed','all','linux','all'], int(ds_metrics['vulnerabilities_detected_linux'] - int(ds_metrics['vulnerabilities_protected_linux'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','online','linux','all'], int(ds_metrics['vulnerabilities_detected_linux_online'] - int(ds_metrics['vulnerabilities_protected_linux_online'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','offline','linux','all'], int(ds_metrics['vulnerabilities_detected_linux_offline'] - int(ds_metrics['vulnerabilities_protected_linux_offline'])))
+        tm_ds.add_metric(['vulnerabilities','exposed','all','linux','all'], vulnerabilities_exposed_linux)
+        tm_ds.add_metric(['vulnerabilities','exposed','online','linux','all'], vulnerabilities_exposed_linux_online)
+        tm_ds.add_metric(['vulnerabilities','exposed','offline','linux','all'], vulnerabilities_exposed_linux_offline)
         tm_ds.add_metric(['vulnerabilities','detected','all','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown']))
         tm_ds.add_metric(['vulnerabilities','protected','all','unknown','all'], int(ds_metrics['vulnerabilities_protected_unknown']))
         tm_ds.add_metric(['vulnerabilities','detected','online','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown_online']))
         tm_ds.add_metric(['vulnerabilities','detected','offline','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown_offline']))
         tm_ds.add_metric(['vulnerabilities','protected','online','unknown','all'], int(ds_metrics['vulnerabilities_protected_unknown_online']))
         tm_ds.add_metric(['vulnerabilities','protected','offline','unknown','all'], int(ds_metrics['vulnerabilities_protected_unknown_offline']))
-        tm_ds.add_metric(['vulnerabilities','exposed','all','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown'] - int(ds_metrics['vulnerabilities_protected_unknown'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','online','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown_online'] - int(ds_metrics['vulnerabilities_protected_unknown_online'])))
-        tm_ds.add_metric(['vulnerabilities','exposed','offline','unknown','all'], int(ds_metrics['vulnerabilities_detected_unknown_offline'] - int(ds_metrics['vulnerabilities_protected_unknown_offline'])))
-        # tm_ds.add_metric(['vulnerabilities','exposed','online','all','all'], int(ds_metrics['vulnerabilities_exposed_windows_online'])+ int(ds_metrics['vulnerabilities_exposed_linux_online'])+ int(ds_metrics['vulnerabilities_exposed_unknown_online']))
-        # tm_ds.add_metric(['vulnerabilities','exposed','offline','all','all'], int(ds_metrics['vulnerabilities_exposed_windows_offline'])+ int(ds_metrics['vulnerabilities_exposed_linux_offline'])+ int(ds_metrics['vulnerabilities_exposed_unknown_offline']))
+        tm_ds.add_metric(['vulnerabilities','exposed','all','unknown','all'], vulnerabilities_exposed_unknown)
+        tm_ds.add_metric(['vulnerabilities','exposed','online','unknown','all'], vulnerabilities_exposed_unknown_online)
+        tm_ds.add_metric(['vulnerabilities','exposed','offline','unknown','all'], vulnerabilities_exposed_unknown_offline)
+
+        tm_ds.add_metric(['vulnerabilities','exposed','online','all','all'], vulnerabilities_exposed_online)
+        tm_ds.add_metric(['vulnerabilities','exposed','offline','all','all'], vulnerabilities_exposed_offline)
         yield tm_ds
 
 
