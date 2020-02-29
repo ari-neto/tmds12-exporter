@@ -62,6 +62,30 @@ class CustomCollector(object):
         tm_ds.add_metric(['ips_clients','all','all','all','all'], int(ds_metrics['ip_count']))
         tm_ds.add_metric(['integrity_monitoring_clients','all','all','all','all'], int(ds_metrics['im_count']))
         tm_ds.add_metric(['log_inspection_clients','all','all','all','all'], int(ds_metrics['li_count']))
+        
+        tm_ds.add_metric(['antimalware_clients','managed','all','all','all'], int(ds_metrics['am_count_managed']))
+        tm_ds.add_metric(['antimalware_clients','managed','online','all','all'], int(ds_metrics['am_count_managed_online']))
+        tm_ds.add_metric(['antimalware_clients','managed','offline','all','all'], int(ds_metrics['am_count_managed_offline']))
+
+        tm_ds.add_metric(['web_reputation_clients','managed','all','all','all'], int(ds_metrics['wr_count_managed']))
+        tm_ds.add_metric(['web_reputation_clients','managed','online','all','all'], int(ds_metrics['wr_count_managed_online']))
+        tm_ds.add_metric(['web_reputation_clients','managed','offline','all','all'], int(ds_metrics['wr_count_managed_offline']))
+
+        tm_ds.add_metric(['firewall_clients','managed','all','all','all'], int(ds_metrics['fw_count_managed']))
+        tm_ds.add_metric(['firewall_clients','managed','online','all','all'], int(ds_metrics['fw_count_managed_online']))
+        tm_ds.add_metric(['firewall_clients','managed','offline','all','all'], int(ds_metrics['fw_count_managed_offline']))
+
+        tm_ds.add_metric(['ips_clients','managed','all','all','all'], int(ds_metrics['ip_count_managed']))
+        tm_ds.add_metric(['ips_clients','managed','online','all','all'], int(ds_metrics['ip_count_managed_online']))
+        tm_ds.add_metric(['ips_clients','managed','offline','all','all'], int(ds_metrics['ip_count_managed_offline']))
+
+        tm_ds.add_metric(['integrity_monitoring_clients','managed','all','all','all'], int(ds_metrics['im_count_managed']))
+        tm_ds.add_metric(['integrity_monitoring_clients','online','all','all','all'], int(ds_metrics['im_count_managed_online']))
+        tm_ds.add_metric(['integrity_monitoring_clients','offline','all','all','all'], int(ds_metrics['im_count_managed_offline']))
+
+        tm_ds.add_metric(['log_inspection_clients','managed','all','all','all'], int(ds_metrics['li_count_managed']))
+        tm_ds.add_metric(['log_inspection_clients','online','all','all','all'], int(ds_metrics['li_count_managed_online']))
+        tm_ds.add_metric(['log_inspection_clients','offline','all','all','all'], int(ds_metrics['li_count_managed_offline']))
 
         tm_ds.add_metric(['vulnerabilities','detected','all','all','all'], int(ds_metrics['vulnerabilities_detected']))
         tm_ds.add_metric(['vulnerabilities','detected','online','all','all'], int(ds_metrics['vulnerabilities_detected_windows_online'])+ int(ds_metrics['vulnerabilities_detected_linux_online'])+ int(ds_metrics['vulnerabilities_detected_unknown_online']))

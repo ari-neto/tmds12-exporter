@@ -18,6 +18,7 @@ import re
 import json
 from datetime import datetime, timedelta
 
+
 # Add the DSM information to the API client configuration
 configuration = api.Configuration() # Create a Configuration object
 configuration.host = environ.get("DS_HOST", default=config.DS_HOST)  # Set the URL of the DSM
@@ -85,6 +86,31 @@ def ds_summary():
     ip_count = 0
     im_count = 0
     li_count = 0
+
+    am_count_managed = 0
+    am_count_managed_online = 0
+    am_count_managed_offline = 0
+
+    wr_count_managed = 0
+    wr_count_managed_online = 0
+    wr_count_managed_offline = 0
+
+    fw_count_managed = 0
+    fw_count_managed_online = 0
+    fw_count_managed_offline = 0
+
+    ip_count_managed = 0
+    ip_count_managed_online = 0
+    ip_count_managed_offline = 0
+
+    im_count_managed = 0
+    im_count_managed_online = 0
+    im_count_managed_offline = 0
+
+    li_count_managed = 0
+    li_count_managed_online = 0
+    li_count_managed_offline = 0
+
     managed_count = 0
     managed_online = 0
     managed_offline = 0
@@ -152,16 +178,46 @@ def ds_summary():
                 managed_offline += 1
             if "on" in str(computer.anti_malware.module_status.agent_status_message).lower():
                 am_count += 1
+                am_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    am_count_managed_online += 1
+                else:
+                    am_count_managed_offline += 1
             if "on" in str(computer.web_reputation.module_status.agent_status_message).lower():
                 wr_count += 1
+                wr_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    wr_count_managed_online += 1
+                else:
+                    wr_count_managed_offline += 1
             if "on" in str(computer.firewall.module_status.agent_status_message).lower():
                 fw_count += 1
+                fw_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    fw_count_managed_online += 1
+                else:
+                    fw_count_managed_offline += 1
             if "on" in str(computer.intrusion_prevention.module_status.agent_status_message).lower():
                 ip_count += 1
+                ip_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    ip_count_managed_online += 1
+                else:
+                    ip_count_managed_offline += 1
             if "on" in str(computer.integrity_monitoring.module_status.agent_status_message).lower():
                 im_count += 1
+                im_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    im_count_managed_online += 1
+                else:
+                    im_count_managed_offline += 1
             if "on" in str(computer.log_inspection.module_status.agent_status_message).lower():
                 li_count += 1
+                li_count_managed += 1
+                if "online" in str(computer.computer_status.agent_status_messages).lower():
+                    li_count_managed_online += 1
+                else:
+                    li_count_managed_offline += 1
 
             platform = computer.platform.lower()
 
@@ -339,6 +395,24 @@ def ds_summary():
                 'ip_count': ip_count,
                 'im_count': im_count, 
                 'li_count': li_count,
+                'am_count_managed': am_count_managed,
+                'am_count_managed_online': am_count_managed_online,
+                'am_count_managed_offline': am_count_managed_offline,
+                'wr_count_managed': wr_count_managed,
+                'wr_count_managed_online': wr_count_managed_online,
+                'wr_count_managed_offline': wr_count_managed_offline,
+                'fw_count_managed': fw_count_managed,
+                'fw_count_managed_online': fw_count_managed_online,
+                'fw_count_managed_offline': fw_count_managed_offline,
+                'ip_count_managed': ip_count_managed,
+                'ip_count_managed_online': ip_count_managed_online,
+                'ip_count_managed_offline': ip_count_managed_offline,
+                'im_count_managed': im_count_managed,
+                'im_count_managed_online': im_count_managed_online,
+                'im_count_managed_offline': im_count_managed_offline,
+                'li_count_managed': li_count_managed,
+                'li_count_managed_online': li_count_managed_online,
+                'li_count_managed_offline': li_count_managed_offline,
                 'vulnerabilities_detected': vulnerabilities_detected, 
                 'vulnerabilities_detected_windows': vulnerabilities_detected_windows, 
                 'vulnerabilities_detected_linux': vulnerabilities_detected_linux,
