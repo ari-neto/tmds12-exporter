@@ -48,6 +48,16 @@ class CustomCollector(object):
         tm_ds.add_metric(['computers','unmanaged','all','all','all'], int(ds_metrics['total']) - int(ds_metrics['managed_count']))
         tm_ds.add_metric(['computers','managed','online','all','all'], int(ds_metrics['managed_online']))
         tm_ds.add_metric(['computers','managed','offline','all','all'], int(ds_metrics['managed_offline']))
+
+        tm_ds.add_metric(['computers','managed','online','windows','all'], int(ds_metrics['managed_windows_online']))
+        tm_ds.add_metric(['computers','managed','offline','windows','all'], int(ds_metrics['managed_windows_offline']))
+
+        tm_ds.add_metric(['computers','managed','online','linux','all'], int(ds_metrics['managed_linux_online']))
+        tm_ds.add_metric(['computers','managed','offline','linux','all'], int(ds_metrics['managed_linux_offline']))
+
+        tm_ds.add_metric(['computers','managed','online','unknown','all'], int(ds_metrics['managed_unknown_online']))
+        tm_ds.add_metric(['computers','managed','offline','unknown','all'], int(ds_metrics['managed_unknown_offline']))
+
         tm_ds.add_metric(['computers','managed','all','linux','all'], int(ds_metrics['os_linux_managed']))
         tm_ds.add_metric(['computers','managed','all','windows','all'], int(ds_metrics['os_windows_managed']))
         tm_ds.add_metric(['computers','unmanaged','all','linux','all'], int(ds_metrics['os_linux_unmanaged']))

@@ -113,6 +113,12 @@ def ds_summary():
 
     managed_count = 0
     managed_online = 0
+    managed_windows_online = 0
+    managed_windows_offline = 0
+    managed_linux_online = 0
+    managed_linux_offline = 0
+    managed_unknown_online = 0
+    managed_unknown_offline = 0
     managed_offline = 0
     os_linux = 0
     os_windows = 0
@@ -169,13 +175,28 @@ def ds_summary():
 
     for computer in api_response.computers:
         try:
+            platform = computer.platform.lower()
             total += 1
             if "managed" in str(computer.computer_status.agent_status_messages).lower():
                 managed_count += 1
             if "managed" in str(computer.computer_status.agent_status_messages).lower() and "online" in str(computer.computer_status.agent_status_messages).lower():
                 managed_online += 1
+                if "windows" in platform:
+                    managed_windows_online += 1
+                elif re.match('linux|amazon|debian|ubuntu|oracle|centos|red\shat', platform):
+                    managed_linux_online += 1
+                else:
+                    managed_unknown_online += 1
+                    print(computer.platform.lower())
+
             if "managed" in str(computer.computer_status.agent_status_messages).lower() and not "online" in str(computer.computer_status.agent_status_messages).lower():
                 managed_offline += 1
+                if "windows" in platform:
+                    managed_windows_offline += 1
+                elif re.match('linux|amazon|debian|ubuntu|oracle|centos|red\shat', platform):
+                    managed_linux_offline += 1
+                else:
+                    managed_unknown_offline += 1
             if "on" in str(computer.anti_malware.module_status.agent_status_message).lower():
                 am_count += 1
                 am_count_managed += 1
@@ -219,7 +240,6 @@ def ds_summary():
                 else:
                     li_count_managed_offline += 1
 
-            platform = computer.platform.lower()
 
             if computer.intrusion_prevention.rule_ids is not None:
                 vulnerabilities_detected = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected
@@ -235,7 +255,8 @@ def ds_summary():
                         vulnerabilities_detected_linux_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_linux_online
                     else:
                         vulnerabilities_detected_linux_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_linux_offline
-                elif "unknown" in platform:
+                # elif "unknown" in platform:
+                else:
                     vulnerabilities_detected_unknown = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_unknown
                     if "online" in str(computer.computer_status.agent_status_messages).lower():
                         vulnerabilities_detected_unknown_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_unknown_online
@@ -257,7 +278,8 @@ def ds_summary():
                         vulnerabilities_protected_linux_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_linux_online
                     else:
                         vulnerabilities_protected_linux_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_linux_offline
-                elif "unknown" in platform:
+                # elif "unknown" in platform:
+                else:
                     vulnerabilities_protected_unknown = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_unknown
                     if "online" in str(computer.computer_status.agent_status_messages).lower():
                         vulnerabilities_protected_unknown_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_unknown_online
@@ -374,14 +396,20 @@ def ds_summary():
         platform_message = "platform - {}: {}\n".format(i, platform_list.count(i))
         message = message + platform_message
 
-    print(message)
+    # print(message)
 
     summary = {
                 'timestamp': datetime.now(),
                 'total': total, 
                 'managed_count': managed_count, 
                 'managed_online': managed_online, 
-                'managed_offline': managed_offline, 
+                'managed_offline': managed_offline,
+                'managed_windows_online': managed_windows_online, 
+                'managed_windows_offline': managed_windows_offline,
+                'managed_linux_online': managed_linux_online, 
+                'managed_linux_offline': managed_linux_offline,
+                'managed_unknown_online': managed_unknown_online, 
+                'managed_unknown_offline': managed_unknown_offline, 
                 'os_windows': os_windows, 
                 'os_linux': os_linux, 
                 'os_windows_managed': os_windows_managed, 
@@ -436,6 +464,8 @@ def ds_summary():
                 'vulnerabilities_protected_inline': vulnerabilities_protected_inline,
                 'vulnerabilities_protected_tap': vulnerabilities_protected_tap
     }
+
+    print(summary)
 
     return summary
 
