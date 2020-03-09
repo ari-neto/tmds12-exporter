@@ -2,6 +2,7 @@ import deepsecurity as api
 import datetime
 from deepsecurity.rest import ApiException as api_exception
 from pprint import pprint
+import logging
 import time
 try:
     import src.config as config
@@ -19,11 +20,20 @@ import json
 from datetime import datetime, timedelta
 
 
+# Logging configuration
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=config.LOG_LEVEL)
+
 # Add the DSM information to the API client configuration
-configuration = api.Configuration() # Create a Configuration object
-configuration.host = environ.get("DS_HOST", default=config.DS_HOST)  # Set the URL of the DSM
-configuration.api_key['api-secret-key'] = environ.get("DS_API_KEY", default=config.DS_API_KEY)  # Set the secret key for the DSM
-configuration.verify_ssl = environ.get("DS_VERIFY_SSL", default=config.DS_VERIFY_SSL)
+configuration = api.Configuration()  # Create a Configuration object
+configuration.host = environ.get(
+    "DS_HOST", default=config.DS_HOST)  # Set the URL of the DSM
+# Set the secret key for the DSM
+configuration.api_key['api-secret-key'] = environ.get(
+    "DS_API_KEY", default=config.DS_API_KEY)
+configuration.verify_ssl = environ.get(
+    "DS_VERIFY_SSL", default=config.DS_VERIFY_SSL)
+linux_regex = 'linux|amazon|debian|ubuntu|oracle|centos|red\shat'
 
 # Add the API version to a global variable
 api_version = environ.get("DS_API_VERSION", default=config.DS_API_VERSION)
@@ -32,7 +42,91 @@ api_version = environ.get("DS_API_VERSION", default=config.DS_API_VERSION)
 # Variables for Settings examples
 settings_policy_id = 9
 
-summary = { 'timestamp': 0 }
+template = {
+    'vulnerabilities-ips_rules-all-all-all': 0,
+    'vulnerabitilies-ips_rules-os_linux-all-all': 0,
+    'vulnerabitilies-ips_rules-os_linux-prevent-all': 0,
+    'vulnerabitilies-ips_rules-os_linux-prevent-inline': 0,
+    'vulnerabitilies-ips_rules-os_linux-prevent-tap': 0,
+    'vulnerabitilies-ips_rules-os_linux-detect-all': 0,
+    'vulnerabitilies-ips_rules-os_linux-detect-inline': 0,
+    'vulnerabitilies-ips_rules-os_linux-detect-tap': 0,
+    'vulnerabitilies-ips_rules-os_linux-discovered-all': 0,
+    'vulnerabitilies-ips_rules-os_linux-discovered-inline': 0,
+    'vulnerabitilies-ips_rules-os_linux-discovered-tap': 0,
+    'vulnerabitilies-ips_rules-os_windows-all-all': 0,
+    'vulnerabitilies-ips_rules-os_windows-prevent-all': 0,
+    'vulnerabitilies-ips_rules-os_windows-prevent-inline': 0,
+    'vulnerabitilies-ips_rules-os_windows-prevent-tap': 0,
+    'vulnerabitilies-ips_rules-os_windows-detect-all': 0,
+    'vulnerabitilies-ips_rules-os_windows-detect-inline': 0,
+    'vulnerabitilies-ips_rules-os_windows-detect-tap': 0,
+    'vulnerabitilies-ips_rules-os_windows-discovered-all': 0,
+    'vulnerabitilies-ips_rules-os_windows-discovered-inline': 0,
+    'vulnerabitilies-ips_rules-os_windows-discovered-tap': 0,
+    'vulnerabitilies-ips_rules-os_unknown-all-all': 0,
+    'vulnerabitilies-ips_rules-os_unknown-prevent-all': 0,
+    'vulnerabitilies-ips_rules-os_unknown-prevent-inline': 0,
+    'vulnerabitilies-ips_rules-os_unknown-prevent-tap': 0,
+    'vulnerabitilies-ips_rules-os_unknown-detect-all': 0,
+    'vulnerabitilies-ips_rules-os_unknown-detect-inline': 0,
+    'vulnerabitilies-ips_rules-os_unknown-detect-tap': 0,
+    'vulnerabitilies-ips_rules-os_unknown-discovered-all': 0,
+    'vulnerabitilies-ips_rules-os_unknown-discovered-inline': 0,
+    'vulnerabitilies-ips_rules-os_unknown-discovered-tap': 0
+}
+
+
+summary = {
+            'timestamp': 0,
+            'active': template,
+            'warning': template,
+            'inactive': template,
+            'error': template,
+            'unknown': template
+            }
+
+
+def print_dict(var=None, name=None):
+    for key, value in var.items():
+        print('{} - key: {} - value: {}'.format(name, key, value))
+
+
+def add_key(key=None, var=None, value=None):
+    # "value" is to differentiate when we just add +1 than when we need to add the value (i.e. ips rules)
+    if value is None:
+        if key in var.keys():
+            var[key] += 1
+        else:
+            var[key] = 1
+    else:
+        # we are dealing with IPS rules here
+        if key in var.keys():
+            var[key] += value
+        else:
+            var[key] = value
+    # print('key: {} - value: {}'.format(key, var[key]))
+
+
+
+def get_os(var=None):
+    if 'windows' in var.lower():
+        return 'os_windows'
+    elif re.match(linux_regex, var):
+        return 'os_linux'
+    else:
+        return 'os_unknown'
+
+
+def get_status(var=None, name=None):
+    if name is None:
+        raise NameError('name variable is Null')
+    else:
+        if 'on' in var.lower():
+            return '{}-on'.format(name)
+        else:
+            return '{}-off'.format(name)
+
 
 def check_none_int(item):
     try:
@@ -50,426 +144,384 @@ def delta_date(date):
         difference = now - date
         seconds_in_day = 24 * 60 * 60
         timedelta(0, 8, 562000)
-        delta = divmod(difference.days * seconds_in_day + difference.seconds, 60)
+        delta = divmod(difference.days * seconds_in_day +
+                       difference.seconds, 60)
         # (0, 8)      # 0 minutes, 8 seconds
         # print('min: {}'.format(delta[0]))
         # print('sec: {}'.formart(delta[1]))
         return delta[0]
     except Exception as e:
-        print('delta_date_error: {}'.format(e))
+        logging.info('delta_date_error: {}'.format(e))
 
 
 def get_summary(max_time=60):
     global summary
     try:
         if summary['timestamp'] != 0:
-            delta_time =  delta_date(summary['timestamp'])
+            delta_time = delta_date(summary['timestamp'])
         else:
             summary = ds_summary()
             return summary
         if delta_time >= max_time:
-            print('not_valid_delta_date_seconds: {}'.format(delta_time))
+            logging.info('not_valid_delta_date_minutes (> {}): {}'.format(max_time, delta_time))
             summary = ds_summary()
             return summary
         else:
-            print('valid_delta_date_seconds: {}'.format(delta_time))
+            logging.info(
+                'valid_delta_date_minutes (< {}): {}'.format(max_time, delta_time))
             return summary
     except Exception as e:
-        print('check_timestamp_error: {}'.format(e))
+        logging.info('check_timestamp_error: {}'.format(e))
 
 
 def ds_summary():
+    active = {}
+    warning = {}
+    inactive = {}
+    error = {}
+    unknown = {}
     total = 0
-    am_count = 0
-    wr_count = 0
-    fw_count = 0
-    ip_count = 0
-    im_count = 0
-    li_count = 0
-
-    am_count_managed = 0
-    am_count_managed_online = 0
-    am_count_managed_offline = 0
-
-    wr_count_managed = 0
-    wr_count_managed_online = 0
-    wr_count_managed_offline = 0
-
-    fw_count_managed = 0
-    fw_count_managed_online = 0
-    fw_count_managed_offline = 0
-
-    ip_count_managed = 0
-    ip_count_managed_online = 0
-    ip_count_managed_offline = 0
-
-    im_count_managed = 0
-    im_count_managed_online = 0
-    im_count_managed_offline = 0
-
-    li_count_managed = 0
-    li_count_managed_online = 0
-    li_count_managed_offline = 0
-
-    managed_count = 0
-    managed_online = 0
-    managed_windows_online = 0
-    managed_windows_offline = 0
-    managed_linux_online = 0
-    managed_linux_offline = 0
-    managed_unknown_online = 0
-    managed_unknown_offline = 0
-    managed_offline = 0
-    os_linux = 0
-    os_windows = 0
-    os_linux_managed = 0
-    os_linux_unmanaged = 0
-    os_windows_managed = 0
-    os_windows_unmanaged = 0
-    os_windows_server = 0 
-    os_windows_desktop = 0
-    os_unknown = 0
-    computer_status_set = set()
-    computer_status_list = []
-    agent_version_set = set()
-    agent_version_list = []
-    agent_firewall_setting_network_engine_mode_set = set()
-    agent_firewall_setting_network_engine_mode_list = []
-    platform_set = set()
-    platform_list = []
-    vulnerabilities_detected = 0
-    vulnerabilities_protected = 0
-    vulnerabilities_protected_inline = 0
-    vulnerabilities_protected_tap = 0
-
-    vulnerabilities_detected_windows = 0
-    vulnerabilities_detected_windows_online = 0
-    vulnerabilities_detected_windows_offline = 0
-    vulnerabilities_protected_windows = 0
-    vulnerabilities_protected_windows_online = 0
-    vulnerabilities_protected_windows_offline = 0
-    vulnerabilities_protected_inline_windows = 0
-    vulnerabilities_protected_tap_windows = 0
-
-    vulnerabilities_detected_linux = 0
-    vulnerabilities_detected_linux_online = 0
-    vulnerabilities_detected_linux_offline = 0
-    vulnerabilities_protected_linux = 0
-    vulnerabilities_protected_linux_online = 0
-    vulnerabilities_protected_linux_offline = 0
-    vulnerabilities_protected_inline_linux = 0
-    vulnerabilities_protected_tap_linux = 0
-
-    vulnerabilities_detected_unknown = 0
-    vulnerabilities_detected_unknown_online = 0
-    vulnerabilities_detected_unknown_offline = 0
-    vulnerabilities_protected_unknown = 0
-    vulnerabilities_protected_unknown_online = 0
-    vulnerabilities_protected_unknown_offline = 0
-    vulnerabilities_protected_inline_unknown = 0
-    vulnerabilities_protected_tap_unknown = 0
+    active_total = 0
+    ips_status = None
+    ips_mode = None
 
     api_instance = api.ComputersApi(api.ApiClient(configuration))
     overrides = False
-    api_response = api_instance.list_computers(api_version, overrides=overrides)
+    logging.info('ds_summary: calling ds api')
+    api_response = api_instance.list_computers(
+        api_version, overrides=overrides)
 
+
+    logging.info('ds_summary: metric calc')
     for computer in api_response.computers:
         try:
             platform = computer.platform.lower()
+            agent_status = computer.computer_status.agent_status.lower()
+            agent_version_major = int(computer.agent_version.split('.')[0])
+            agent_version = computer.agent_version
+
+            am_status = str(
+                computer.anti_malware.module_status.agent_status_message).lower()
+            wr_status = str(
+                computer.web_reputation.module_status.agent_status_message).lower()
+            fw_status = str(
+                computer.firewall.module_status.agent_status_message).lower()
+            ip_status = str(
+                computer.intrusion_prevention.module_status.agent_status_message).lower()
+            im_status = str(
+                computer.integrity_monitoring.module_status.agent_status_message).lower()
+            li_status = str(
+                computer.log_inspection.module_status.agent_status_message).lower()
+            
+            os_type = get_os(platform)
+            
             total += 1
-            if "managed" in str(computer.computer_status.agent_status_messages).lower():
-                managed_count += 1
-            if "managed" in str(computer.computer_status.agent_status_messages).lower() and "online" in str(computer.computer_status.agent_status_messages).lower():
-                managed_online += 1
-                if "windows" in platform:
-                    managed_windows_online += 1
-                elif re.match('linux|amazon|debian|ubuntu|oracle|centos|red\shat', platform):
-                    managed_linux_online += 1
-                else:
-                    managed_unknown_online += 1
-                    print(computer.platform.lower())
+            
+            if computer.intrusion_prevention.module_status.agent_status_message is not None:
+                module_agent_status = computer.intrusion_prevention.module_status.agent_status.lower()
+                protect_mode = computer.intrusion_prevention.module_status.agent_status_message.lower()
+                agent_mode = computer.computer_settings.firewall_setting_network_engine_mode.value.lower()
 
-            if "managed" in str(computer.computer_status.agent_status_messages).lower() and not "online" in str(computer.computer_status.agent_status_messages).lower():
-                managed_offline += 1
-                if "windows" in platform:
-                    managed_windows_offline += 1
-                elif re.match('linux|amazon|debian|ubuntu|oracle|centos|red\shat', platform):
-                    managed_linux_offline += 1
+                if computer.intrusion_prevention.rule_ids is not None:
+                    ips_rules = len(computer.intrusion_prevention.rule_ids)
                 else:
-                    managed_unknown_offline += 1
-            if "on" in str(computer.anti_malware.module_status.agent_status_message).lower():
-                am_count += 1
-                am_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    am_count_managed_online += 1
-                else:
-                    am_count_managed_offline += 1
-            if "on" in str(computer.web_reputation.module_status.agent_status_message).lower():
-                wr_count += 1
-                wr_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    wr_count_managed_online += 1
-                else:
-                    wr_count_managed_offline += 1
-            if "on" in str(computer.firewall.module_status.agent_status_message).lower():
-                fw_count += 1
-                fw_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    fw_count_managed_online += 1
-                else:
-                    fw_count_managed_offline += 1
-            if "on" in str(computer.intrusion_prevention.module_status.agent_status_message).lower():
-                ip_count += 1
-                ip_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    ip_count_managed_online += 1
-                else:
-                    ip_count_managed_offline += 1
-            if "on" in str(computer.integrity_monitoring.module_status.agent_status_message).lower():
-                im_count += 1
-                im_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    im_count_managed_online += 1
-                else:
-                    im_count_managed_offline += 1
-            if "on" in str(computer.log_inspection.module_status.agent_status_message).lower():
-                li_count += 1
-                li_count_managed += 1
-                if "online" in str(computer.computer_status.agent_status_messages).lower():
-                    li_count_managed_online += 1
-                else:
-                    li_count_managed_offline += 1
+                    ips_rules = 0
+        
+
+                if 'prevent' in protect_mode and not 'inactive' in protect_mode:
+                    ips_status = 'prevent'
+                elif 'detect' in protect_mode and not 'inactive' in protect_mode:
+                    ips_status = 'detect'
 
 
-            if computer.intrusion_prevention.rule_ids is not None:
-                vulnerabilities_detected = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected
-                if "windows" in platform:
-                    vulnerabilities_detected_windows = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_windows
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_detected_windows_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_windows_online
-                    else:
-                        vulnerabilities_detected_windows_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_windows_offline
-                elif re.match('linux|debian|ubuntu|oracle|centos|red\shat', platform):
-                    vulnerabilities_detected_linux = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_linux
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_detected_linux_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_linux_online
-                    else:
-                        vulnerabilities_detected_linux_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_linux_offline
-                # elif "unknown" in platform:
-                else:
-                    vulnerabilities_detected_unknown = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_unknown
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_detected_unknown_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_unknown_online
-                    else:
-                        vulnerabilities_detected_unknown_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_detected_unknown_offline
-            # if ("prevent" in str(computer.intrusion_prevention.module_status.agent_status_message).lower()) \
-            #         and ("active" in str(computer.computer_status.agent_status)):
-            if "prevent" in computer.intrusion_prevention.module_status.agent_status_message.lower():
-                vulnerabilities_protected = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected
-                if "windows" in platform:
-                    vulnerabilities_protected_windows = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_windows
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_protected_windows_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_windows_online
-                    else:
-                        vulnerabilities_protected_windows_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_windows_offline
-                elif re.match('linux|debian|ubuntu|oracle|centos|red\shat', platform):
-                    vulnerabilities_protected_linux = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_linux
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_protected_linux_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_linux_online
-                    else:
-                        vulnerabilities_protected_linux_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_linux_offline
-                # elif "unknown" in platform:
-                else:
-                    vulnerabilities_protected_unknown = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_unknown
-                    if "online" in str(computer.computer_status.agent_status_messages).lower():
-                        vulnerabilities_protected_unknown_online = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_unknown_online
-                    else:
-                        vulnerabilities_protected_unknown_offline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_unknown_offline
+                if 'inline' in agent_mode and not 'inactive' in module_agent_status:
+                    ips_mode = 'inline'
+                elif 'tap' in agent_mode and not 'inactive' in module_agent_status:
+                    ips_mode = 'tap'
+
+
+            if agent_status == 'active':
+                active_total += 1
+
+                if 'inactive' in module_agent_status:
+                    ips_status = 'discovered'
+
+                add_key(key='computer-platform-all-{}'.format(platform), var=active)
+                add_key(key='computer-platform-{}-{}'.format(os_type, platform), var=active)
+
+                add_key(key='computer-os_type-all-all', var=active)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=active)
+                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=active)
+   
+                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=active)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=active)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=active)
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=active)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=active)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=active)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=active)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=active)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=active)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=active)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=active)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=active)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=active)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=active)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=active)
+
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=active, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-all'.format(
+                    os_type), var=active, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-{}-all'.format(
+                    ips_status), var=active, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-all-{}'.format(
+                    ips_mode), var=active, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=active, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=active, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=active, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=active, value=ips_rules)
+
+            elif agent_status == 'warning':
+
+                if 'inactive' in module_agent_status:
+                    ips_status = 'discovered'
+
+                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=warning)
+                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=warning)
+
+                add_key(key='computer-os_type-all-all', var=warning)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=warning)
+                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=warning)
+
+                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=warning)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=warning)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=warning)
+   
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=warning)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=warning)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=warning)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=warning)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=warning)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=warning)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=warning)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=warning)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=warning)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=warning)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=warning)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=warning)
+
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=warning, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-all'.format(
+                    os_type), var=warning, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-{}-all'.format(
+                    ips_status), var=warning, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-all-{}'.format(
+                    ips_mode), var=warning, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=warning, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=warning, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=warning, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=warning, value=ips_rules)
+            elif agent_status == 'inactive':
+
+
+                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=inactive)
+                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=inactive)
+
+                add_key(key='computer-os_type-all-all', var=inactive)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=inactive)
+                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=inactive)
+
+                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=inactive)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=inactive)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=inactive)
+
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=inactive)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=inactive)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=inactive)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=inactive)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=inactive)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=inactive)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=inactive)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=inactive)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=inactive)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=inactive)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=inactive)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=inactive)
+
+                # vulnerabilities-ips_rules-os_windows-prevent-inline - value: 2
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=inactive, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
+                    os_type), var=inactive, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
+                    ips_status), var=inactive, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
+                    ips_mode), var=inactive, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=inactive, value=ips_rules)
                 
-                if "prevent" in computer.intrusion_prevention.module_status.agent_status_message.lower() and "inline" in computer.computer_settings.firewall_setting_network_engine_mode.value.lower():
-                    vulnerabilities_protected_inline = len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_inline
-                elif  "prevent" in computer.intrusion_prevention.module_status.agent_status_message.lower() and "tap" in computer.computer_settings.firewall_setting_network_engine_mode.value.lower():
-                    vulnerabilities_protected_tap += len(computer.intrusion_prevention.rule_ids) + vulnerabilities_protected_tap
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-all'.format(
+                    os_type), var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-{}-all'.format(
+                    ips_status), var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-all-{}'.format(
+                    ips_mode), var=inactive, value=ips_rules)
 
-            agent_version_list.append(str(computer.agent_version))
-            agent_version_set.add(str(computer.agent_version))
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=inactive, value=ips_rules)
 
-            agent_firewall_setting_network_engine_mode_list.append(computer.computer_settings.firewall_setting_network_engine_mode.value)
-            agent_firewall_setting_network_engine_mode_set.add(computer.computer_settings.firewall_setting_network_engine_mode.value)
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=inactive, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=inactive, value=ips_rules)
 
-            computer_status_list.append(computer.computer_status.agent_status)
-            computer_status_set.add(computer.computer_status.agent_status)
 
-            platform_list.append(computer.platform)
-            platform_set.add(computer.platform)
+            elif agent_status == 'error':
+                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=error)
+                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=error)
 
-            if "windows" in platform:
-                os_windows += 1
-                if "managed" in str(computer.computer_status.agent_status_messages).lower():
-                    os_windows_managed += 1
-                else:
-                    os_windows_unmanaged += 1
-                if "server" in platform:
-                    os_windows_server += 1
-                else:
-                    os_windows_desktop += 1
-            elif re.match('linux|debian|ubuntu|oracle|centos|red\shat', platform):
-                os_linux += 1
-                if "managed" in str(computer.computer_status.agent_status_messages).lower():
-                    os_linux_managed += 1
-                else:
-                    os_linux_unmanaged += 1
-            elif "unknown" in platform:
-                os_unknown += 1
+                add_key(key='computer-os_type-all-all', var=error)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=error)
+                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=error)
+
+                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=error)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=error)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=error)
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=error)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=error)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=error)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=error)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=error)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=error)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=error)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=error)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=error)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=error)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=error)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=error)
+
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=error, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
+                    os_type), var=error, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
+                    ips_status), var=error, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
+                    ips_mode), var=error, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=error, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=error, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=error, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=error, value=ips_rules)
+            else:
+                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=unknown)
+                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=unknown)
+
+                add_key(key='computer-os_type-all-all', var=unknown)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=unknown)
+                add_key(key='computer-os_type-{}-{}'.format(os_type,
+                                                            platform), var=unknown)
+
+                add_key(
+                    key='computer-agent_version-all-{}'.format(agent_version), var=unknown)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type,
+                                                                  agent_version), var=unknown)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type,
+                                                                        agent_version_major), var=unknown)
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=unknown)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=unknown)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=unknown)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=unknown)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=unknown)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=unknown)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=unknown)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=unknown)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=unknown)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=unknown)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=unknown)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=unknown)
+
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=unknown, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-all'.format(
+                    os_type), var=unknown, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-{}-all'.format(
+                    ips_status), var=unknown, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-all-all-{}'.format(
+                    ips_mode), var=unknown, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=unknown, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=unknown, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=unknown, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=unknown, value=ips_rules)
 
         except Exception as e:
-            print(e)
+            logging.info('ds_summary - error: {}'.format(e))
 
-        # print("-------------------------------------------------------")
+    print_dict(active, 'active')
+    print('active hosts: {}'.format(active_total))
+    print_dict(inactive, 'inactive')
+    print_dict(warning, 'warning')
+    print_dict(error, 'error')
+    print_dict(unknown, 'unknown')
 
-    message = "I am giving you a summary of your environment protected by Trend Micro Security Platform:\n" \
-                "total computers: {}\n" \
-                "managed_agents: {}\n" \
-                "managed_online_agents: {}\n" \
-                "managed_offline_agents: {}\n" \
-                "os_windows: {}\n" \
-                "os_linux: {}\n" \
-                "os_unknown: {}\n" \
-                "antimalware agents: {}\n" \
-                "web_reputation agents: {}\n" \
-                "firewall agents: {}\n" \
-                "intrusion_prevention agents: {}\n" \
-                "vulnerabilities detected: {}\n" \
-                "vulnerabilities detected_windows: {}\n" \
-                "vulnerabilities detected_windows_online: {}\n" \
-                "vulnerabilities detected_windows_offline: {}\n" \
-                "vulnerabilities detected_linux: {}\n" \
-                "vulnerabilities detected_linux_online: {}\n" \
-                "vulnerabilities detected_linux_offline: {}\n" \
-                "vulnerabilities detected_unknown: {}\n" \
-                "vulnerabilities detected_unknown_online: {}\n" \
-                "vulnerabilities detected_unknown_offiline: {}\n" \
-                "vulnerabilities protected: {}\n" \
-                "vulnerabilities protected_windows: {}\n" \
-                "vulnerabilities protected_windows_online: {}\n" \
-                "vulnerabilities protected_windows_offline: {}\n" \
-                "vulnerabilities protected_linux: {}\n" \
-                "vulnerabilities protected_linux_online: {}\n" \
-                "vulnerabilities protected_linux_offline: {}\n" \
-                "vulnerabilities protected_unknown: {}\n" \
-                "vulnerabilities protected_unknown_online: {}\n" \
-                "vulnerabilities protected_unknown_offiline: {}\n" \
-                "vulnerabilities protected_inline: {}\n" \
-                "vulnerabilities protected_tap: {}\n" \
-                "integrity_monitoring agents: {}\n" \
-                "log_inspection agents: {}\n".format(total, managed_count, managed_online, managed_offline, 
-                                                     os_windows, os_linux, os_unknown,
-                                                     am_count, wr_count, fw_count, ip_count,
-                                                     vulnerabilities_detected, vulnerabilities_detected_windows,
-                                                     vulnerabilities_detected_windows_online, vulnerabilities_detected_windows_offline,
-                                                     vulnerabilities_detected_linux,
-                                                     vulnerabilities_detected_linux_online, vulnerabilities_detected_linux_offline,
-                                                     vulnerabilities_detected_unknown,
-                                                     vulnerabilities_detected_unknown_online, vulnerabilities_detected_unknown_offline,
-                                                     vulnerabilities_protected, vulnerabilities_protected_windows,
-                                                     vulnerabilities_protected_windows_online, vulnerabilities_protected_windows_offline,
-                                                     vulnerabilities_protected_linux,
-                                                     vulnerabilities_protected_linux_online, vulnerabilities_protected_linux_offline,
-                                                     vulnerabilities_protected_unknown,
-                                                     vulnerabilities_protected_unknown_online, vulnerabilities_protected_unknown_offline,
-                                                     vulnerabilities_protected_inline, vulnerabilities_protected_tap,
-                                                     im_count, li_count)
+    # print('total: {}'.format(total))
 
-    for i in agent_version_set:
-        agent_message = "{}: {}\n".format(i, agent_version_list.count(i))
-        message = message + agent_message
-
-    for i in agent_firewall_setting_network_engine_mode_set:
-        agent_firewall_setting_network_engine_mode = "network engine - {}: {}\n".format(i, agent_firewall_setting_network_engine_mode_list.count(i))
-        message = message + agent_firewall_setting_network_engine_mode
-
-    for i in computer_status_set:
-        computer_status_message = "agent_status - {}: {}\n".format(i, computer_status_list.count(i))
-        message = message + computer_status_message
-
-    for i in platform_set:
-        platform_message = "platform - {}: {}\n".format(i, platform_list.count(i))
-        message = message + platform_message
-
-    # print(message)
-
-    summary = {
-                'timestamp': datetime.now(),
-                'total': total, 
-                'managed_count': managed_count, 
-                'managed_online': managed_online, 
-                'managed_offline': managed_offline,
-                'managed_windows_online': managed_windows_online, 
-                'managed_windows_offline': managed_windows_offline,
-                'managed_linux_online': managed_linux_online, 
-                'managed_linux_offline': managed_linux_offline,
-                'managed_unknown_online': managed_unknown_online, 
-                'managed_unknown_offline': managed_unknown_offline, 
-                'os_windows': os_windows, 
-                'os_linux': os_linux, 
-                'os_windows_managed': os_windows_managed, 
-                'os_linux_managed': os_linux_managed, 
-                'os_windows_unmanaged': os_windows_unmanaged, 
-                'os_linux_unmanaged': os_linux_unmanaged, 
-                'os_unknown': os_unknown,
-                'am_count': am_count, 
-                'wr_count': wr_count, 
-                'fw_count': fw_count, 
-                'ip_count': ip_count,
-                'im_count': im_count, 
-                'li_count': li_count,
-                'am_count_managed': am_count_managed,
-                'am_count_managed_online': am_count_managed_online,
-                'am_count_managed_offline': am_count_managed_offline,
-                'wr_count_managed': wr_count_managed,
-                'wr_count_managed_online': wr_count_managed_online,
-                'wr_count_managed_offline': wr_count_managed_offline,
-                'fw_count_managed': fw_count_managed,
-                'fw_count_managed_online': fw_count_managed_online,
-                'fw_count_managed_offline': fw_count_managed_offline,
-                'ip_count_managed': ip_count_managed,
-                'ip_count_managed_online': ip_count_managed_online,
-                'ip_count_managed_offline': ip_count_managed_offline,
-                'im_count_managed': im_count_managed,
-                'im_count_managed_online': im_count_managed_online,
-                'im_count_managed_offline': im_count_managed_offline,
-                'li_count_managed': li_count_managed,
-                'li_count_managed_online': li_count_managed_online,
-                'li_count_managed_offline': li_count_managed_offline,
-                'vulnerabilities_detected': vulnerabilities_detected, 
-                'vulnerabilities_detected_windows': vulnerabilities_detected_windows, 
-                'vulnerabilities_detected_linux': vulnerabilities_detected_linux,
-                'vulnerabilities_detected_unknown': vulnerabilities_detected_unknown,
-                'vulnerabilities_detected_windows_online': vulnerabilities_detected_windows_online, 
-                'vulnerabilities_detected_linux_online': vulnerabilities_detected_linux_online,
-                'vulnerabilities_detected_unknown_online': vulnerabilities_detected_unknown_online,
-                'vulnerabilities_detected_windows_offline': vulnerabilities_detected_windows_offline, 
-                'vulnerabilities_detected_linux_offline': vulnerabilities_detected_linux_offline,
-                'vulnerabilities_detected_unknown_offline': vulnerabilities_detected_unknown_offline,
-                'vulnerabilities_protected': vulnerabilities_protected,
-                'vulnerabilities_protected_windows': vulnerabilities_protected_windows, 
-                'vulnerabilities_protected_linux': vulnerabilities_protected_linux,
-                'vulnerabilities_protected_unknown': vulnerabilities_protected_unknown,
-                'vulnerabilities_protected_windows_online': vulnerabilities_protected_windows_online, 
-                'vulnerabilities_protected_linux_online': vulnerabilities_protected_linux_online,
-                'vulnerabilities_protected_unknown_online': vulnerabilities_protected_unknown_online,
-                'vulnerabilities_protected_windows_offline': vulnerabilities_protected_windows_offline, 
-                'vulnerabilities_protected_linux_offline': vulnerabilities_protected_linux_offline,
-                'vulnerabilities_protected_unknown_offline': vulnerabilities_protected_unknown_offline,
-                'vulnerabilities_protected_inline': vulnerabilities_protected_inline,
-                'vulnerabilities_protected_tap': vulnerabilities_protected_tap
-    }
-
-    print(summary)
-
+    summary = { 
+                'timestamp': datetime.now(), 
+                'active': active,
+                'warning': warning, 
+                'inactive': inactive, 
+                'error': error, 
+                'unknown': unknown 
+                }
+    logging.info('ds_summary: returning metrics')
     return summary
 
+logging.info('starting application: calling get_summary')
 summary = get_summary()
+
 
 def main():
     ''' Run the examples from the Create and Configure Policies guide
@@ -478,7 +530,6 @@ def main():
     and any required variables and prints their output.
     '''
     # ds_summary()
-
 
 
 if __name__ == '__main__':
