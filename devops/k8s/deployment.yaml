@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tmds-exporter
+  namespace: tmds-exporter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        productName: tmselabs
+        projectName: tmds-exporter
+        appName: tmds-exporter
+        createdBy: aon-se
+    spec:
+      containers:
+      - name: ferryman-slack-br
+        image: tmselabs.azurecr.io/tmselabs/tmds-exporter:latest
+        imagePullPolicy: Always
+        env:
+          - name: DS_HOST
+            value: 'https://app.deepsecurity.trendmicro.com/api'
+          - name: DS_API_VERSION
+            value: 'v1'
+          - name: DS_API_KEY
+            valueFrom:
+              secretKeyRef:
+                key: ds_api_key
+                name: tmds-exporter-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "150m"
+        ports:
+            - containerPort: 5000
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 5000
+        #     httpHeaders:
+        #     - name: X-Custom-Header
+        #       value: healthCheck
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 10 # default 10
+        #   timeoutSeconds: 30 # default 1
+        #   successThreshold: 1 # default 1
+        #   failureThreshold: 3 # default 3
