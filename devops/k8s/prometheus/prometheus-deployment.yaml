@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2016-02-18T18:52:05Z
+  name: prometheus-config
+  namespace: tmds-exporter
+data:
+  prometheus.yml: |
+      # my global config
+      global:
+        scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+        evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+        # scrape_timeout is set to the global default (10s).
+      # Alertmanager configuration
+      alerting:
+        alertmanagers:
+        - static_configs:
+          - targets:
+            # - alertmanager:9093
+      # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+      rule_files:
+        # - "first_rules.yml"
+        # - "second_rules.yml"
+      # A scrape configuration containing exactly one endpoint to scrape:
+      # Here it's Prometheus itself.
+      scrape_configs:
+        # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+        - job_name: 'prometheus'
+          # metrics_path defaults to '/metrics'
+          # scheme defaults to 'http'.
+          static_configs:
+          - targets: ['localhost:9090']
+        # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+        - job_name: 'deep-security'
+          scrape_interval: 15s
+          # metrics_path defaults to '/metrics'
+          # scheme defaults to 'http'.
+          static_configs:
+          - targets: ['tmds-exporter:9090']    
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: tmds-exporter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        productName: tmselabs
+        projectName: tmds-exporter
+        appName: prometheus
+        createdBy: aon-se
+    spec:
+      securityContext:
+        fsGroup: 2000
+        runAsUser: 1000
+        runAsNonRoot: true
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.16.0
+        # imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "150m"
+        ports:
+            - containerPort: 5000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+        - name: prometheus-volume
+          mountPath: /prometheus
+      volumes:
+      - name: config-volume
+        configMap:
+          # Provide the name of the ConfigMap containing the files you want
+          # to add to the container
+          name: prometheus-config
+      - name: prometheus-volume
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 5000
+        #     httpHeaders:
+        #     - name: X-Custom-Header
+        #       value: healthCheck
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 10 # default 10
+        #   timeoutSeconds: 30 # default 1
+        #   successThreshold: 1 # default 1
+        #   failureThreshold: 3 # default 3
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus
+  namespace: tmds-exporter
+  labels:
+    productName: tmselabs
+    projectName: tmds-exporter
+    appName: prometheus
+spec:
+  selector:
+    productName: tmselabs
+    projectName: tmds-exporter
+    appName: prometheus
+    createdBy: aon-se
+  ports:
+    - port: 9090
+      targetPort: 9090
+  type: ClusterIP
