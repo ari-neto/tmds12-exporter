@@ -42,48 +42,44 @@ api_version = environ.get("DS_API_VERSION", default=config.DS_API_VERSION)
 # Variables for Settings examples
 settings_policy_id = 9
 
-template = {
-    'vulnerabilities-ips_rules-all-all-all': 0,
-    'vulnerabitilies-ips_rules-os_linux-all-all': 0,
-    'vulnerabitilies-ips_rules-os_linux-prevent-all': 0,
-    'vulnerabitilies-ips_rules-os_linux-prevent-inline': 0,
-    'vulnerabitilies-ips_rules-os_linux-prevent-tap': 0,
-    'vulnerabitilies-ips_rules-os_linux-detect-all': 0,
-    'vulnerabitilies-ips_rules-os_linux-detect-inline': 0,
-    'vulnerabitilies-ips_rules-os_linux-detect-tap': 0,
-    'vulnerabitilies-ips_rules-os_linux-discovered-all': 0,
-    'vulnerabitilies-ips_rules-os_linux-discovered-inline': 0,
-    'vulnerabitilies-ips_rules-os_linux-discovered-tap': 0,
-    'vulnerabitilies-ips_rules-os_windows-all-all': 0,
-    'vulnerabitilies-ips_rules-os_windows-prevent-all': 0,
-    'vulnerabitilies-ips_rules-os_windows-prevent-inline': 0,
-    'vulnerabitilies-ips_rules-os_windows-prevent-tap': 0,
-    'vulnerabitilies-ips_rules-os_windows-detect-all': 0,
-    'vulnerabitilies-ips_rules-os_windows-detect-inline': 0,
-    'vulnerabitilies-ips_rules-os_windows-detect-tap': 0,
-    'vulnerabitilies-ips_rules-os_windows-discovered-all': 0,
-    'vulnerabitilies-ips_rules-os_windows-discovered-inline': 0,
-    'vulnerabitilies-ips_rules-os_windows-discovered-tap': 0,
-    'vulnerabitilies-ips_rules-os_unknown-all-all': 0,
-    'vulnerabitilies-ips_rules-os_unknown-prevent-all': 0,
-    'vulnerabitilies-ips_rules-os_unknown-prevent-inline': 0,
-    'vulnerabitilies-ips_rules-os_unknown-prevent-tap': 0,
-    'vulnerabitilies-ips_rules-os_unknown-detect-all': 0,
-    'vulnerabitilies-ips_rules-os_unknown-detect-inline': 0,
-    'vulnerabitilies-ips_rules-os_unknown-detect-tap': 0,
-    'vulnerabitilies-ips_rules-os_unknown-discovered-all': 0,
-    'vulnerabitilies-ips_rules-os_unknown-discovered-inline': 0,
-    'vulnerabitilies-ips_rules-os_unknown-discovered-tap': 0
-}
+# possible bug
+# template = {
+#     'vulnerabilities-ips_rules-all-all-all': 0,
+#     'vulnerabitilies-ips_rules-os_linux-all-all': 0,
+#     'vulnerabitilies-ips_rules-os_linux-prevent-all': 0,
+#     'vulnerabitilies-ips_rules-os_linux-prevent-inline': 0,
+#     'vulnerabitilies-ips_rules-os_linux-prevent-tap': 0,
+#     'vulnerabitilies-ips_rules-os_linux-detect-all': 0,
+#     'vulnerabitilies-ips_rules-os_linux-detect-inline': 0,
+#     'vulnerabitilies-ips_rules-os_linux-detect-tap': 0,
+#     'vulnerabitilies-ips_rules-os_linux-discovered-all': 0,
+#     'vulnerabitilies-ips_rules-os_linux-discovered-inline': 0,
+#     'vulnerabitilies-ips_rules-os_linux-discovered-tap': 0,
+#     'vulnerabitilies-ips_rules-os_windows-all-all': 0,
+#     'vulnerabitilies-ips_rules-os_windows-prevent-all': 0,
+#     'vulnerabitilies-ips_rules-os_windows-prevent-inline': 0,
+#     'vulnerabitilies-ips_rules-os_windows-prevent-tap': 0,
+#     'vulnerabitilies-ips_rules-os_windows-detect-all': 0,
+#     'vulnerabitilies-ips_rules-os_windows-detect-inline': 0,
+#     'vulnerabitilies-ips_rules-os_windows-detect-tap': 0,
+#     'vulnerabitilies-ips_rules-os_windows-discovered-all': 0,
+#     'vulnerabitilies-ips_rules-os_windows-discovered-inline': 0,
+#     'vulnerabitilies-ips_rules-os_windows-discovered-tap': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-all-all': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-prevent-all': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-prevent-inline': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-prevent-tap': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-detect-all': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-detect-inline': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-detect-tap': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-discovered-all': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-discovered-inline': 0,
+#     'vulnerabitilies-ips_rules-os_unknown-discovered-tap': 0
+# }
 
 
 summary = {
-            'timestamp': 0,
-            'active': template,
-            'warning': template,
-            'inactive': template,
-            'error': template,
-            'unknown': template
+            'timestamp': 0
             }
 
 
@@ -178,6 +174,7 @@ def ds_summary():
     active = {}
     warning = {}
     inactive = {}
+    offline = {}
     error = {}
     unknown = {}
     total = 0
@@ -197,6 +194,7 @@ def ds_summary():
         try:
             platform = computer.platform.lower()
             agent_status = computer.computer_status.agent_status.lower()
+            agent_message = str(computer.computer_status.agent_status_messages).lower()
             agent_version_major = int(computer.agent_version.split('.')[0])
             agent_version = computer.agent_version
 
@@ -402,8 +400,52 @@ def ds_summary():
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=inactive, value=ips_rules)
 
+            elif agent_status == 'error' and 'offline' in agent_message:
+                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=offline)
+                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=offline)
 
-            elif agent_status == 'error':
+                add_key(key='computer-os_type-all-all', var=offline)
+                add_key(key='computer-os_type-{}-all'.format(os_type), var=offline)
+                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=offline)
+
+                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=offline)
+                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=offline)
+                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=offline)
+
+                add_key(key=get_status(am_status, 'module-am_status-all'), var=offline)
+                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=offline)
+                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=offline)
+                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=offline)
+                add_key(key=get_status(im_status, 'module-im_status-all'), var=offline)
+                add_key(key=get_status(li_status, 'module-li_status-all'), var=offline)
+
+                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=offline)
+                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=offline)
+                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=offline)
+                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=offline)
+                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=offline)
+                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=offline)
+
+                add_key(key='vulnerabilities-ips_rules-all-all-all',
+                        var=offline, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
+                    os_type), var=offline, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
+                    ips_status), var=offline, value=ips_rules)
+                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
+                    ips_mode), var=offline, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+                    os_type, ips_status), var=offline, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+                    os_type, ips_status, ips_mode), var=offline, value=ips_rules)
+
+                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+                    ips_status, ips_mode), var=offline, value=ips_rules)
+                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+                    os_type, ips_mode), var=offline, value=ips_rules)
+
+            elif agent_status == 'error' and 'offline' not in agent_message:
                 add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=error)
                 add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=error)
 
@@ -500,11 +542,12 @@ def ds_summary():
             logging.info('ds_summary - error: {}'.format(e))
 
     print_dict(active, 'active')
-    print('active hosts: {}'.format(active_total))
-    print_dict(inactive, 'inactive')
-    print_dict(warning, 'warning')
-    print_dict(error, 'error')
-    print_dict(unknown, 'unknown')
+    # print('active hosts: {}'.format(active_total))
+    # print_dict(inactive, 'inactive')
+    # print_dict(warning, 'warning')
+    # print_dict(error, 'error')
+    # print_dict(unknown, 'unknown')
+    # print_dict(offline, 'offline')
 
     # print('total: {}'.format(total))
 
@@ -514,6 +557,7 @@ def ds_summary():
                 'warning': warning, 
                 'inactive': inactive, 
                 'error': error, 
+                'offline': offline, 
                 'unknown': unknown 
                 }
     logging.info('ds_summary: returning metrics')

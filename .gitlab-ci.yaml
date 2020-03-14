@@ -1,0 +1,48 @@
+image: docker:stable
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  APP_NAME: demo-website
+
+  # Workaround - https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:dind
+
+stages:
+  - lint
+  - build
+  - security
+  - push
+
+lint pipeline:
+  stage: lint
+  script:
+    - 'docker run --rm -t -v $(pwd):/workdir giantswarm/yamllint -d "{extends: relaxed, rules:{line-length: {max: 150}}}" ./.gitlab-ci.yml'
+
+run Smart Check:
+  stage: security
+  script:
+    - docker build -t "$APP_NAME":latest .
+    - >-
+        docker run -v /var/run/docker.sock:/var/run/docker.sock
+        deepsecurity/smartcheck-scan-action
+        --image-name "$APP_NAME"
+        --smartcheck-host="$DSSC_HOSTNAME"
+        --smartcheck-user="$DSSC_USERNAME"
+        --smartcheck-password="$DSSC_PASSWORD"
+        --insecure-skip-tls-verify
+        --insecure-skip-registry-tls-verify
+        --preregistry-scan
+        --preregistry-user "$PRE_REGISTRY_USERNAME"
+        --preregistry-password "$PRE_REGISTRY_PASSWORD"
+push clean image:
+  stage: push
+  only:
+    - master
+  script:
+    - docker login -u "$BLESSED_REGISTRY_USERNAME" -p "$BLESSED_REGISTRY_PASSWORD" "$BLESSED_REGISTRY_HOSTNAME":5000
+    - docker build -t "$BLESSED_REGISTRY_HOSTNAME":5000/"$APP_NAME":latest .
+    - docker push "$BLESSED_REGISTRY_HOSTNAME":5000/"$APP_NAME"
