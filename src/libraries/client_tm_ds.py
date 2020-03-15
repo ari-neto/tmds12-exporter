@@ -403,52 +403,6 @@ def ds_summary():
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=inactive, value=ips_rules)
 
-            # elif agent_status == 'error' and re.match('offline|failed', agent_message):
-            #     print('error-offline: {}'.format(agent_message))
-            #     add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=offline)
-            #     add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=offline)
-
-            #     add_key(key='computer-os_type-all-all', var=offline)
-            #     add_key(key='computer-os_type-{}-all'.format(os_type), var=offline)
-            #     add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=offline)
-
-            #     add_key(key='computer-agent_version-all-{}'.format(agent_version), var=offline)
-            #     add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=offline)
-            #     add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=offline)
-
-            #     add_key(key=get_status(am_status, 'module-am_status-all'), var=offline)
-            #     add_key(key=get_status(wr_status, 'module-wr_status-all'), var=offline)
-            #     add_key(key=get_status(fw_status, 'module-fw_status-all'), var=offline)
-            #     add_key(key=get_status(ip_status, 'module-ip_status-all'), var=offline)
-            #     add_key(key=get_status(im_status, 'module-im_status-all'), var=offline)
-            #     add_key(key=get_status(li_status, 'module-li_status-all'), var=offline)
-
-            #     add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=offline)
-            #     add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=offline)
-            #     add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=offline)
-            #     add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=offline)
-            #     add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=offline)
-            #     add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=offline)
-
-            #     add_key(key='vulnerabilities-ips_rules-all-all-all',
-            #             var=offline, value=ips_rules)
-            #     add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
-            #         os_type), var=offline, value=ips_rules)
-            #     add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
-            #         ips_status), var=offline, value=ips_rules)
-            #     add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
-            #         ips_mode), var=offline, value=ips_rules)
-
-            #     add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
-            #         os_type, ips_status), var=offline, value=ips_rules)
-            #     add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
-            #         os_type, ips_status, ips_mode), var=offline, value=ips_rules)
-
-            #     add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
-            #         ips_status, ips_mode), var=offline, value=ips_rules)
-            #     add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
-            #         os_type, ips_mode), var=offline, value=ips_rules)
-
             elif agent_status == 'error':
                 ips_rules_error_total += ips_rules
 
