@@ -111,6 +111,7 @@ def get_os(var=None):
     elif re.match(linux_regex, var):
         return 'os_linux'
     else:
+        logging.debug('unknown os: {}'.format(var.lower()))
         return 'os_unknown'
 
 
@@ -118,7 +119,7 @@ def get_status(var=None, name=None):
     if name is None:
         raise NameError('name variable is Null')
     else:
-        if 'on' in var.lower():
+        if 'on,' in var.lower() or var.lower() == 'on':
             return '{}-on'.format(name)
         else:
             return '{}-off'.format(name)
@@ -179,8 +180,13 @@ def ds_summary():
     unknown = {}
     total = 0
     active_total = 0
-    ips_status = None
-    ips_mode = None
+    ips_rules_total = 0 
+    ips_rules_active_total = 0
+    ips_rules_inactive_total = 0
+    ips_rules_warning_total = 0
+    ips_rules_error_total = 0
+    ips_rules_unknown_total = 0
+
 
     api_instance = api.ComputersApi(api.ApiClient(configuration))
     overrides = False
@@ -197,6 +203,7 @@ def ds_summary():
             agent_message = str(computer.computer_status.agent_status_messages).lower()
             agent_version_major = int(computer.agent_version.split('.')[0])
             agent_version = computer.agent_version
+            os_type = get_os(platform)
 
             am_status = str(
                 computer.anti_malware.module_status.agent_status_message).lower()
@@ -210,8 +217,10 @@ def ds_summary():
                 computer.integrity_monitoring.module_status.agent_status_message).lower()
             li_status = str(
                 computer.log_inspection.module_status.agent_status_message).lower()
-            
-            os_type = get_os(platform)
+            ips_status = None
+            ips_mode = None
+            ips_rules = 0
+
             
             total += 1
             
@@ -224,12 +233,17 @@ def ds_summary():
                     ips_rules = len(computer.intrusion_prevention.rule_ids)
                 else:
                     ips_rules = 0
-        
+
 
                 if 'prevent' in protect_mode and not 'inactive' in protect_mode:
                     ips_status = 'prevent'
                 elif 'detect' in protect_mode and not 'inactive' in protect_mode:
                     ips_status = 'detect'
+                else:
+                    # not activated, 'off, installed, 2 rules' and 'off, not installed, no rules' will match this case
+                    ips_status = 'discovered'
+                    logging.debug('ips_status - not prevent|detect: {}'.format(
+                        computer.intrusion_prevention.module_status.agent_status_message.lower()))
 
 
                 if 'inline' in agent_mode and not 'inactive' in module_agent_status:
@@ -237,12 +251,10 @@ def ds_summary():
                 elif 'tap' in agent_mode and not 'inactive' in module_agent_status:
                     ips_mode = 'tap'
 
-
+            ips_rules_total += ips_rules
             if agent_status == 'active':
                 active_total += 1
-
-                if 'inactive' in module_agent_status:
-                    ips_status = 'discovered'
+                ips_rules_active_total += ips_rules
 
                 add_key(key='computer-platform-all-{}'.format(platform), var=active)
                 add_key(key='computer-platform-{}-{}'.format(os_type, platform), var=active)
@@ -253,6 +265,8 @@ def ds_summary():
    
                 add_key(key='computer-agent_version-all-{}'.format(agent_version), var=active)
                 add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=active)
+                add_key(
+                    key='computer-agent_version_major-all-{}'.format(agent_version_major), var=active)
                 add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=active)
 
                 add_key(key=get_status(am_status, 'module-am_status-all'), var=active)
@@ -289,9 +303,7 @@ def ds_summary():
                     os_type, ips_mode), var=active, value=ips_rules)
 
             elif agent_status == 'warning':
-
-                if 'inactive' in module_agent_status:
-                    ips_status = 'discovered'
+                ips_rules_warning_total += ips_rules
 
                 add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=warning)
                 add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=warning)
@@ -302,6 +314,8 @@ def ds_summary():
 
                 add_key(key='computer-agent_version-all-{}'.format(agent_version), var=warning)
                 add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=warning)
+                add_key(
+                    key='computer-agent_version_major-all-{}'.format(agent_version_major), var=warning)
                 add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=warning)
    
 
@@ -338,7 +352,7 @@ def ds_summary():
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=warning, value=ips_rules)
             elif agent_status == 'inactive':
-
+                ips_rules_inactive_total += ips_rules
 
                 add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=inactive)
                 add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=inactive)
@@ -349,6 +363,8 @@ def ds_summary():
 
                 add_key(key='computer-agent_version-all-{}'.format(agent_version), var=inactive)
                 add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=inactive)
+                add_key(
+                    key='computer-agent_version_major-all-{}'.format(agent_version_major), var=inactive)
                 add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=inactive)
 
 
@@ -367,19 +383,6 @@ def ds_summary():
                 add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=inactive)
 
                 # vulnerabilities-ips_rules-os_windows-prevent-inline - value: 2
-                add_key(key='vulnerabilities-ips_rules-all-all-all',
-                        var=inactive, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
-                    os_type), var=inactive, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
-                    ips_status), var=inactive, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
-                    ips_mode), var=inactive, value=ips_rules)
-
-                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
-                    os_type, ips_status), var=inactive, value=ips_rules)
-                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
-                    os_type, ips_status, ips_mode), var=inactive, value=ips_rules)
                 
                 add_key(key='vulnerabilities-ips_rules-all-all-all',
                         var=inactive, value=ips_rules)
@@ -400,52 +403,55 @@ def ds_summary():
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=inactive, value=ips_rules)
 
-            elif agent_status == 'error' and 'offline' in agent_message:
-                add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=offline)
-                add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=offline)
+            # elif agent_status == 'error' and re.match('offline|failed', agent_message):
+            #     print('error-offline: {}'.format(agent_message))
+            #     add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=offline)
+            #     add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=offline)
 
-                add_key(key='computer-os_type-all-all', var=offline)
-                add_key(key='computer-os_type-{}-all'.format(os_type), var=offline)
-                add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=offline)
+            #     add_key(key='computer-os_type-all-all', var=offline)
+            #     add_key(key='computer-os_type-{}-all'.format(os_type), var=offline)
+            #     add_key(key='computer-os_type-{}-{}'.format(os_type, platform), var=offline)
 
-                add_key(key='computer-agent_version-all-{}'.format(agent_version), var=offline)
-                add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=offline)
-                add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=offline)
+            #     add_key(key='computer-agent_version-all-{}'.format(agent_version), var=offline)
+            #     add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=offline)
+            #     add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=offline)
 
-                add_key(key=get_status(am_status, 'module-am_status-all'), var=offline)
-                add_key(key=get_status(wr_status, 'module-wr_status-all'), var=offline)
-                add_key(key=get_status(fw_status, 'module-fw_status-all'), var=offline)
-                add_key(key=get_status(ip_status, 'module-ip_status-all'), var=offline)
-                add_key(key=get_status(im_status, 'module-im_status-all'), var=offline)
-                add_key(key=get_status(li_status, 'module-li_status-all'), var=offline)
+            #     add_key(key=get_status(am_status, 'module-am_status-all'), var=offline)
+            #     add_key(key=get_status(wr_status, 'module-wr_status-all'), var=offline)
+            #     add_key(key=get_status(fw_status, 'module-fw_status-all'), var=offline)
+            #     add_key(key=get_status(ip_status, 'module-ip_status-all'), var=offline)
+            #     add_key(key=get_status(im_status, 'module-im_status-all'), var=offline)
+            #     add_key(key=get_status(li_status, 'module-li_status-all'), var=offline)
 
-                add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=offline)
-                add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=offline)
-                add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=offline)
-                add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=offline)
-                add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=offline)
-                add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(am_status, 'module-am_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(wr_status, 'module-wr_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(fw_status, 'module-fw_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(ip_status, 'module-ip_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(im_status, 'module-im_status-{}'.format(os_type)), var=offline)
+            #     add_key(key=get_status(li_status, 'module-li_status-{}'.format(os_type)), var=offline)
 
-                add_key(key='vulnerabilities-ips_rules-all-all-all',
-                        var=offline, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
-                    os_type), var=offline, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
-                    ips_status), var=offline, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
-                    ips_mode), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabilities-ips_rules-all-all-all',
+            #             var=offline, value=ips_rules)
+            #     add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
+            #         os_type), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
+            #         ips_status), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
+            #         ips_mode), var=offline, value=ips_rules)
 
-                add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
-                    os_type, ips_status), var=offline, value=ips_rules)
-                add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
-                    os_type, ips_status, ips_mode), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
+            #         os_type, ips_status), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabilities-ips_rules-{}-{}-{}'.format(
+            #         os_type, ips_status, ips_mode), var=offline, value=ips_rules)
 
-                add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
-                    ips_status, ips_mode), var=offline, value=ips_rules)
-                add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
-                    os_type, ips_mode), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabilities-ips_rules-all-{}-{}'.format(
+            #         ips_status, ips_mode), var=offline, value=ips_rules)
+            #     add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
+            #         os_type, ips_mode), var=offline, value=ips_rules)
 
-            elif agent_status == 'error' and 'offline' not in agent_message:
+            elif agent_status == 'error':
+                ips_rules_error_total += ips_rules
+
                 add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=error)
                 add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=error)
 
@@ -455,6 +461,8 @@ def ds_summary():
 
                 add_key(key='computer-agent_version-all-{}'.format(agent_version), var=error)
                 add_key(key='computer-agent_version-{}-{}'.format(os_type, agent_version), var=error)
+                add_key(
+                    key='computer-agent_version_major-all-{}'.format(agent_version_major), var=error)
                 add_key(key='computer-agent_version_major-{}-{}'.format(os_type, agent_version_major), var=error)
 
                 add_key(key=get_status(am_status, 'module-am_status-all'), var=error)
@@ -473,11 +481,11 @@ def ds_summary():
 
                 add_key(key='vulnerabilities-ips_rules-all-all-all',
                         var=error, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-{}-all-all'.format(
+                add_key(key='vulnerabilities-ips_rules-{}-all-all'.format(
                     os_type), var=error, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-{}-all'.format(
+                add_key(key='vulnerabilities-ips_rules-all-{}-all'.format(
                     ips_status), var=error, value=ips_rules)
-                add_key(key='vulnerabitilies-ips_rules-all-all-{}'.format(
+                add_key(key='vulnerabilities-ips_rules-all-all-{}'.format(
                     ips_mode), var=error, value=ips_rules)
 
                 add_key(key='vulnerabilities-ips_rules-{}-{}-all'.format(
@@ -489,10 +497,14 @@ def ds_summary():
                     ips_status, ips_mode), var=error, value=ips_rules)
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=error, value=ips_rules)
+
             else:
+                logging.debug('unknown computer: {}'.format(computer.host_name))
+                ips_rules_unknown_total += ips_rules
+
                 add_key(key=get_status(agent_version, 'computer-platform-all-{}'.format(platform)), var=unknown)
                 add_key(key=get_status(agent_version, 'computer-platform-{}-{}'.format(os_type, platform)), var=unknown)
-
+                
                 add_key(key='computer-os_type-all-all', var=unknown)
                 add_key(key='computer-os_type-{}-all'.format(os_type), var=unknown)
                 add_key(key='computer-os_type-{}-{}'.format(os_type,
@@ -502,6 +514,8 @@ def ds_summary():
                     key='computer-agent_version-all-{}'.format(agent_version), var=unknown)
                 add_key(key='computer-agent_version-{}-{}'.format(os_type,
                                                                   agent_version), var=unknown)
+                add_key(
+                    key='computer-agent_version_major-all-{}'.format(agent_version_major), var=unknown)
                 add_key(key='computer-agent_version_major-{}-{}'.format(os_type,
                                                                         agent_version_major), var=unknown)
 
@@ -537,11 +551,11 @@ def ds_summary():
                     ips_status, ips_mode), var=unknown, value=ips_rules)
                 add_key(key='vulnerabilities-ips_rules-{}-all-{}'.format(
                     os_type, ips_mode), var=unknown, value=ips_rules)
-
+                
         except Exception as e:
             logging.info('ds_summary - error: {}'.format(e))
 
-    print_dict(active, 'active')
+    # print_dict(active, 'active')
     # print('active hosts: {}'.format(active_total))
     # print_dict(inactive, 'inactive')
     # print_dict(warning, 'warning')
@@ -550,13 +564,23 @@ def ds_summary():
     # print_dict(offline, 'offline')
 
     # print('total: {}'.format(total))
+    logging.info('total ips rules found - active agents: {}'.format(ips_rules_active_total))
+    logging.info(
+        'total ips rules found - inactive agents: {}'.format(ips_rules_inactive_total))
+    logging.info(
+        'total ips rules found - warning agents: {}'.format(ips_rules_warning_total))
+    logging.info(
+        'total ips rules found - error agents: {}'.format(ips_rules_error_total))
+    logging.info(
+        'total ips rules found - unknown agents: {}'.format(ips_rules_unknown_total))
+    logging.info('total ips rules found: {}'.format(ips_rules_total))
 
     summary = { 
                 'timestamp': datetime.now(), 
-                'active': active,
+                'managed': active,
                 'warning': warning, 
-                'inactive': inactive, 
-                'error': error, 
+                'unmanaged': inactive, 
+                'critical': error, 
                 'offline': offline, 
                 'unknown': unknown 
                 }

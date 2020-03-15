@@ -70,7 +70,8 @@ class CustomCollector(object):
                         # vulnerabilities-ips-os_windows-inline-tap - value: 2
                         tm_ds_vulnerabilities.add_metric(
                             [k.split('-')[1], key, os_platform, k.split('-')[3], k.split('-')[4]], int(val))
-                        # print('vul: {} - {} - {} - {} -{} - {}'.format(k.split('-')[1], key, os_platform, k.split('-')[3], k.split('-')[4], int(val)))
+                        # if key == 'critical':
+                        #     print('vul: {} - {} - {} - {} -{} - {}'.format(k.split('-')[1], key, os_platform, k.split('-')[3], k.split('-')[4], int(val)))
         yield tm_ds_computers
         yield tm_ds_modules
         yield tm_ds_vulnerabilities
