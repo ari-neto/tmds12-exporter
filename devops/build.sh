@@ -3,7 +3,7 @@
 source ~/creds/projects/devops
 APP="tmselabs"
 CONT_NAME="tmds-exporter"
-VERSION="0.0.0"
+VERSION="0.0.0a"
 
 case "$1" in
     scan)

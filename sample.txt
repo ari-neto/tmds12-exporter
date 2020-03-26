@@ -1,0 +1,370 @@
+# HELP deep_security_computers_total Deep Security Computer Metrics
+# TYPE deep_security_computers_total counter
+deep_security_computers_total{metric="platform",platform="all",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="all",status="all",type="managed"} 6.0
+deep_security_computers_total{metric="os_type",platform="linux",status="all",type="managed"} 5.0
+deep_security_computers_total{metric="os_type",platform="linux",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.563",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.563",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="12",type="managed"} 5.0
+deep_security_computers_total{metric="agent_version_major",platform="linux",status="12",type="managed"} 5.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 18 (64 bit) (4.15.0",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.767",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.767",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="amazon linux 2 (64 bit) (4.14.154",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="amazon linux 2 (64 bit) (4.14.154",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="amazon linux 2 (64 bit) (4.14.154",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.817",type="managed"} 2.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.817",type="managed"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="debian 9 (64 bit) (4.9.0",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows server 2008 r2 (64 bit) service pack 1 build 7601",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows server 2008 r2 (64 bit) service pack 1 build 7601",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="windows",status="all",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows server 2008 r2 (64 bit) service pack 1 build 7601",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="11.0.0.796",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="11.0.0.796",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="11",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="11",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="red hat enterprise 7 (64 bit) (3.10.0",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="red hat enterprise 7 (64 bit) (3.10.0",type="managed"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="red hat enterprise 7 (64 bit) (3.10.0",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.911",type="managed"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.911",type="managed"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows 10 (64 bit)  build 16299",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows 10 (64 bit)  build 16299",type="warning"} 1.0
+deep_security_computers_total{metric="os_type",platform="all",status="all",type="warning"} 4.0
+deep_security_computers_total{metric="os_type",platform="windows",status="all",type="warning"} 2.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows 10 (64 bit)  build 16299",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.563",type="warning"} 2.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="12.0.0.563",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="12",type="warning"} 3.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="12",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows server 2012 r2 (64 bit)  build 9600",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows server 2012 r2 (64 bit)  build 9600",type="warning"} 1.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows server 2012 r2 (64 bit)  build 9600",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="11.1.0.194",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="11.1.0.194",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="11",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="11",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="debian 10 (64 bit) (5.3.17)",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="debian 10 (64 bit) (5.3.17)",type="warning"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="all",type="warning"} 2.0
+deep_security_computers_total{metric="os_type",platform="linux",status="debian 10 (64 bit) (5.3.17)",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.817",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.817",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="linux",status="12",type="warning"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 18 (64 bit) (4.15.0",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="warning"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="warning"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.563",type="warning"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 14 (64 bit)",type="unmanaged"} 7.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 14 (64 bit)",type="unmanaged"} 7.0
+deep_security_computers_total{metric="os_type",platform="all",status="all",type="unmanaged"} 68.0
+deep_security_computers_total{metric="os_type",platform="linux",status="all",type="unmanaged"} 50.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 14 (64 bit)",type="unmanaged"} 7.0
+deep_security_computers_total{metric="agent_version",platform="all",status="0.0.0.0",type="unmanaged"} 68.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="0.0.0.0",type="unmanaged"} 50.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="0",type="unmanaged"} 68.0
+deep_security_computers_total{metric="agent_version_major",platform="linux",status="0",type="unmanaged"} 50.0
+deep_security_computers_total{metric="platform",platform="all",status="red hat enterprise 7 (64 bit)",type="unmanaged"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="red hat enterprise 7 (64 bit)",type="unmanaged"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="red hat enterprise 7 (64 bit)",type="unmanaged"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="amazon linux (64 bit)",type="unmanaged"} 5.0
+deep_security_computers_total{metric="platform",platform="linux",status="amazon linux (64 bit)",type="unmanaged"} 5.0
+deep_security_computers_total{metric="os_type",platform="linux",status="amazon linux (64 bit)",type="unmanaged"} 5.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 16 (64 bit)",type="unmanaged"} 12.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 16 (64 bit)",type="unmanaged"} 12.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 16 (64 bit)",type="unmanaged"} 12.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 10 (64 bit)",type="unmanaged"} 21.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 10 (64 bit)",type="unmanaged"} 21.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 10 (64 bit)",type="unmanaged"} 21.0
+deep_security_computers_total{metric="platform",platform="all",status="unknown (64 bit)",type="unmanaged"} 9.0
+deep_security_computers_total{metric="platform",platform="unknown",status="unknown (64 bit)",type="unmanaged"} 9.0
+deep_security_computers_total{metric="os_type",platform="unknown",status="all",type="unmanaged"} 16.0
+deep_security_computers_total{metric="os_type",platform="unknown",status="unknown (64 bit)",type="unmanaged"} 9.0
+deep_security_computers_total{metric="agent_version",platform="unknown",status="0.0.0.0",type="unmanaged"} 16.0
+deep_security_computers_total{metric="agent_version_major",platform="unknown",status="0",type="unmanaged"} 16.0
+deep_security_computers_total{metric="platform",platform="all",status="unknown",type="unmanaged"} 7.0
+deep_security_computers_total{metric="platform",platform="unknown",status="unknown",type="unmanaged"} 7.0
+deep_security_computers_total{metric="os_type",platform="unknown",status="unknown",type="unmanaged"} 7.0
+deep_security_computers_total{metric="platform",platform="all",status="linux",type="unmanaged"} 4.0
+deep_security_computers_total{metric="platform",platform="linux",status="linux",type="unmanaged"} 4.0
+deep_security_computers_total{metric="os_type",platform="linux",status="linux",type="unmanaged"} 4.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows (64 bit)",type="unmanaged"} 2.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows (64 bit)",type="unmanaged"} 2.0
+deep_security_computers_total{metric="os_type",platform="windows",status="all",type="unmanaged"} 2.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows (64 bit)",type="unmanaged"} 2.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="0.0.0.0",type="unmanaged"} 2.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="0",type="unmanaged"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="all",status="all",type="critical"} 11.0
+deep_security_computers_total{metric="os_type",platform="linux",status="all",type="critical"} 7.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="11.3.0.235",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="11.3.0.235",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="11",type="critical"} 3.0
+deep_security_computers_total{metric="agent_version_major",platform="linux",status="11",type="critical"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="11.3.0.376",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="11.3.0.376",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows 10 (64 bit)  build 17763",type="critical"} 2.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows 10 (64 bit)  build 17763",type="critical"} 2.0
+deep_security_computers_total{metric="os_type",platform="windows",status="all",type="critical"} 3.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows 10 (64 bit)  build 17763",type="critical"} 2.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.360",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="12.0.0.360",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="12",type="critical"} 7.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="12",type="critical"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="debian 9 (64 bit) (4.9.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.364",type="critical"} 2.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.364",type="critical"} 2.0
+deep_security_computers_total{metric="agent_version_major",platform="linux",status="12",type="critical"} 5.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 18 (64 bit) (4.15.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.563",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="12.0.0.563",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="unknown",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="unknown",status="unknown",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="unknown",status="all",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="unknown",status="unknown",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="0.0.0.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="unknown",status="0.0.0.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="all",status="0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="unknown",status="0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="ubuntu linux 18 (64 bit) (5.3.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="ubuntu linux 18 (64 bit) (5.3.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="ubuntu linux 18 (64 bit) (5.3.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.817",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.817",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="microsoft windows 10 (64 bit)  build 18362",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="windows",status="microsoft windows 10 (64 bit)  build 18362",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="windows",status="microsoft windows 10 (64 bit)  build 18362",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="11.1.0.194",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="windows",status="11.1.0.194",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version_major",platform="windows",status="11",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="all",status="red hat enterprise 7 (64 bit) (3.10.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="red hat enterprise 7 (64 bit) (3.10.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="red hat enterprise 7 (64 bit) (3.10.0",type="critical"} 1.0
+deep_security_computers_total{metric="agent_version",platform="all",status="12.0.0.911",type="critical"} 2.0
+deep_security_computers_total{metric="agent_version",platform="linux",status="12.0.0.911",type="critical"} 2.0
+deep_security_computers_total{metric="platform",platform="all",status="red hat enterprise 8 (64 bit) (4.18.0",type="critical"} 1.0
+deep_security_computers_total{metric="platform",platform="linux",status="red hat enterprise 8 (64 bit) (4.18.0",type="critical"} 1.0
+deep_security_computers_total{metric="os_type",platform="linux",status="red hat enterprise 8 (64 bit) (4.18.0",type="critical"} 1.0
+# HELP deep_security_modules_total Deep Security Modules Metrics
+# TYPE deep_security_modules_total counter
+deep_security_modules_total{metric="am_status",platform="all",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="wr_status",platform="all",status="off",type="managed"} 3.0
+deep_security_modules_total{metric="fw_status",platform="all",status="off",type="managed"} 4.0
+deep_security_modules_total{metric="ip_status",platform="all",status="on",type="managed"} 4.0
+deep_security_modules_total{metric="im_status",platform="all",status="off",type="managed"} 2.0
+deep_security_modules_total{metric="li_status",platform="all",status="off",type="managed"} 3.0
+deep_security_modules_total{metric="am_status",platform="linux",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="off",type="managed"} 2.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="off",type="managed"} 3.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="on",type="managed"} 4.0
+deep_security_modules_total{metric="im_status",platform="linux",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="li_status",platform="linux",status="off",type="managed"} 2.0
+deep_security_modules_total{metric="wr_status",platform="all",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="fw_status",platform="all",status="on",type="managed"} 2.0
+deep_security_modules_total{metric="im_status",platform="all",status="on",type="managed"} 4.0
+deep_security_modules_total{metric="li_status",platform="all",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="on",type="managed"} 2.0
+deep_security_modules_total{metric="im_status",platform="linux",status="on",type="managed"} 4.0
+deep_security_modules_total{metric="li_status",platform="linux",status="on",type="managed"} 3.0
+deep_security_modules_total{metric="am_status",platform="all",status="off",type="managed"} 3.0
+deep_security_modules_total{metric="am_status",platform="linux",status="off",type="managed"} 2.0
+deep_security_modules_total{metric="ip_status",platform="all",status="off",type="managed"} 2.0
+deep_security_modules_total{metric="am_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="wr_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="fw_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="im_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="li_status",platform="windows",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="off",type="managed"} 1.0
+deep_security_modules_total{metric="am_status",platform="all",status="off",type="warning"} 2.0
+deep_security_modules_total{metric="wr_status",platform="all",status="on",type="warning"} 3.0
+deep_security_modules_total{metric="fw_status",platform="all",status="off",type="warning"} 4.0
+deep_security_modules_total{metric="ip_status",platform="all",status="on",type="warning"} 2.0
+deep_security_modules_total{metric="im_status",platform="all",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="li_status",platform="all",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="am_status",platform="windows",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="wr_status",platform="windows",status="on",type="warning"} 2.0
+deep_security_modules_total{metric="fw_status",platform="windows",status="off",type="warning"} 2.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="im_status",platform="windows",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="li_status",platform="windows",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="am_status",platform="all",status="on",type="warning"} 2.0
+deep_security_modules_total{metric="ip_status",platform="all",status="off",type="warning"} 2.0
+deep_security_modules_total{metric="im_status",platform="all",status="on",type="warning"} 3.0
+deep_security_modules_total{metric="li_status",platform="all",status="on",type="warning"} 3.0
+deep_security_modules_total{metric="am_status",platform="windows",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="im_status",platform="windows",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="li_status",platform="windows",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="wr_status",platform="all",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="am_status",platform="linux",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="off",type="warning"} 2.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="off",type="warning"} 1.0
+deep_security_modules_total{metric="im_status",platform="linux",status="on",type="warning"} 2.0
+deep_security_modules_total{metric="li_status",platform="linux",status="on",type="warning"} 2.0
+deep_security_modules_total{metric="am_status",platform="linux",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="on",type="warning"} 1.0
+deep_security_modules_total{metric="am_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="wr_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="fw_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="ip_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="im_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="li_status",platform="all",status="off",type="unmanaged"} 68.0
+deep_security_modules_total{metric="am_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="im_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="li_status",platform="linux",status="off",type="unmanaged"} 50.0
+deep_security_modules_total{metric="am_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="wr_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="fw_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="ip_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="im_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="li_status",platform="unknown",status="off",type="unmanaged"} 16.0
+deep_security_modules_total{metric="am_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="wr_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="fw_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="im_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="li_status",platform="windows",status="off",type="unmanaged"} 2.0
+deep_security_modules_total{metric="am_status",platform="all",status="on",type="critical"} 3.0
+deep_security_modules_total{metric="wr_status",platform="all",status="on",type="critical"} 4.0
+deep_security_modules_total{metric="fw_status",platform="all",status="on",type="critical"} 2.0
+deep_security_modules_total{metric="ip_status",platform="all",status="on",type="critical"} 7.0
+deep_security_modules_total{metric="im_status",platform="all",status="on",type="critical"} 7.0
+deep_security_modules_total{metric="li_status",platform="all",status="on",type="critical"} 4.0
+deep_security_modules_total{metric="am_status",platform="linux",status="on",type="critical"} 3.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="on",type="critical"} 4.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="on",type="critical"} 1.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="on",type="critical"} 5.0
+deep_security_modules_total{metric="im_status",platform="linux",status="on",type="critical"} 5.0
+deep_security_modules_total{metric="li_status",platform="linux",status="on",type="critical"} 3.0
+deep_security_modules_total{metric="fw_status",platform="all",status="off",type="critical"} 9.0
+deep_security_modules_total{metric="li_status",platform="all",status="off",type="critical"} 7.0
+deep_security_modules_total{metric="fw_status",platform="linux",status="off",type="critical"} 6.0
+deep_security_modules_total{metric="li_status",platform="linux",status="off",type="critical"} 4.0
+deep_security_modules_total{metric="am_status",platform="all",status="off",type="critical"} 8.0
+deep_security_modules_total{metric="wr_status",platform="all",status="off",type="critical"} 7.0
+deep_security_modules_total{metric="am_status",platform="windows",status="off",type="critical"} 3.0
+deep_security_modules_total{metric="wr_status",platform="windows",status="off",type="critical"} 3.0
+deep_security_modules_total{metric="fw_status",platform="windows",status="off",type="critical"} 2.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="on",type="critical"} 2.0
+deep_security_modules_total{metric="im_status",platform="windows",status="on",type="critical"} 2.0
+deep_security_modules_total{metric="li_status",platform="windows",status="on",type="critical"} 1.0
+deep_security_modules_total{metric="am_status",platform="linux",status="off",type="critical"} 4.0
+deep_security_modules_total{metric="fw_status",platform="windows",status="on",type="critical"} 1.0
+deep_security_modules_total{metric="li_status",platform="windows",status="off",type="critical"} 2.0
+deep_security_modules_total{metric="ip_status",platform="all",status="off",type="critical"} 4.0
+deep_security_modules_total{metric="im_status",platform="all",status="off",type="critical"} 4.0
+deep_security_modules_total{metric="am_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="wr_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="fw_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="ip_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="im_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="li_status",platform="unknown",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="wr_status",platform="linux",status="off",type="critical"} 3.0
+deep_security_modules_total{metric="im_status",platform="linux",status="off",type="critical"} 2.0
+deep_security_modules_total{metric="ip_status",platform="windows",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="im_status",platform="windows",status="off",type="critical"} 1.0
+deep_security_modules_total{metric="ip_status",platform="linux",status="off",type="critical"} 2.0
+# HELP deep_security_vulnerabilities_total Deep Security Vulnerabilities Metrics
+# TYPE deep_security_vulnerabilities_total counter
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="all",type="managed"} 70.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="all",type="managed"} 68.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="detect",type="managed"} 13.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="all",type="managed"} 53.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="detect",type="managed"} 13.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="detect",type="managed"} 13.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="detect",type="managed"} 13.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="all",type="managed"} 53.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="prevent",type="managed"} 40.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="prevent",type="managed"} 40.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="prevent",type="managed"} 40.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="prevent",type="managed"} 40.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="all",type="managed"} 2.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="discovered",type="managed"} 17.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="all",type="managed"} 17.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="discovered",type="managed"} 2.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="discovered",type="managed"} 2.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="discovered",type="managed"} 17.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="all",type="managed"} 2.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="discovered",type="managed"} 15.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="discovered",type="managed"} 15.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="all",type="managed"} 15.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="all",type="warning"} 791.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="all",type="warning"} 582.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="prevent",type="warning"} 791.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="all",type="warning"} 791.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="prevent",type="warning"} 582.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="windows",status="prevent",type="warning"} 582.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="prevent",type="warning"} 791.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="windows",status="all",type="warning"} 582.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="all",type="warning"} 209.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="prevent",type="warning"} 209.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="prevent",type="warning"} 209.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="all",type="warning"} 209.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="all",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="all",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="discovered",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="all",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="discovered",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="discovered",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="discovered",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="all",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="unknown",status="all",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="unknown",status="discovered",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="unknown",status="discovered",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="unknown",status="all",type="unmanaged"} 431.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="all",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="discovered",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="discovered",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="all",type="unmanaged"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="all",type="critical"} 1052.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="all",type="critical"} 919.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="prevent",type="critical"} 1038.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="all",type="critical"} 1052.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="prevent",type="critical"} 905.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="prevent",type="critical"} 905.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="prevent",type="critical"} 1038.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="all",type="critical"} 919.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="all",type="critical"} 133.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="prevent",type="critical"} 133.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="windows",status="prevent",type="critical"} 133.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="windows",status="all",type="critical"} 133.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="detect",type="critical"} 14.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="detect",type="critical"} 14.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="linux",status="detect",type="critical"} 14.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="inline",platform="all",status="detect",type="critical"} 14.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="unknown",status="all",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="all",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="all",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="unknown",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="unknown",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="all",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="unknown",status="all",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="windows",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="windows",status="all",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="all",platform="linux",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="discovered",type="critical"} 0.0
+deep_security_vulnerabilities_total{metric="ips_rules",mode="None",platform="linux",status="all",type="critical"} 0.0

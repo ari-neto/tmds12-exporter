@@ -6,7 +6,7 @@ import logging
 import signal
 import sys
 import config
-import libraries.client_tm_ds as ds
+import client_tm_ds as ds
 from datetime import datetime
 
 # Logging configuration
