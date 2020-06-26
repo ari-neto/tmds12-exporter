@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: ferryman-slack-br
-        image: tmselabs.azurecr.io/tmselabs/tmds-exporter:0.0.0a
+        image: 179239123302.dkr.ecr.us-east-1.amazonaws.com/tmselabs/tmds-exporter:latest
+        # image: tmselabs.azurecr.io/tmselabs/tmds-exporter:latest
         imagePullPolicy: Always
         env:
           - name: DS_HOST

@@ -1,10 +1,14 @@
 #!/bin/bash
 # source ~/creds/projects/ferryman-slack
 source ~/creds/projects/devops
-APP="tmselabs"
+APP="tmds-exporter"
 CONT_NAME="tmds-exporter"
-VERSION="0.0.0a"
+VERSION="0.0.0"
 
+APP=tmselabs
+DOCKER_REGISTRY='179239123302.dkr.ecr.us-east-1.amazonaws.com'
+REGISTRY_CRED=~/creds/registry_aws_techbr-demo_credential.json
+SC_HOST='container-security.tmselabs.com'
 case "$1" in
     scan)
         figlet "scanning image"
@@ -26,6 +30,7 @@ case "$1" in
         ;;
     ci)
         #docker login -u dasalabsreg -p 'psInLHnF=RptpwEKXXkOnS5WIxIcgSA5' dasalabsreg.azurecr.io
+        $(aws ecr get-login --no-include-email --region us-east-1)
         figlet "docker build"
         echo " "
         docker build -t $CONT_NAME .

@@ -4,8 +4,16 @@ from deepsecurity.rest import ApiException as api_exception
 from pprint import pprint
 import logging
 import time
-import config
+try:
+    import src.config as config
+except ModuleNotFoundError:
+    import config as config
 from os import environ
+
+try:
+    import src.libraries.ds_search as search
+except ModuleNotFoundError:
+    import libraries.ds_search as search
 import re
 # Get the DSM URL and API key from the properties.json file
 import json
@@ -25,8 +33,6 @@ configuration.api_key['api-secret-key'] = environ.get(
     "DS_API_KEY", default=config.DS_API_KEY)
 configuration.verify_ssl = environ.get(
     "DS_VERIFY_SSL", default=config.DS_VERIFY_SSL)
-page_size = environ.get(
-    "PAGE_SIZE", default=config.DS_PAGE_SIZE)
 linux_regex = 'linux|amazon|debian|ubuntu|oracle|centos|red\shat'
 
 # Add the API version to a global variable
@@ -95,7 +101,7 @@ def add_key(key=None, var=None, value=None):
             var[key] += value
         else:
             var[key] = value
-    logging.debug('key: {} - value: {}'.format(key, var[key]))
+    # print('key: {} - value: {}'.format(key, var[key]))
 
 
 
@@ -165,61 +171,6 @@ def get_summary(max_time=60):
         logging.info('check_timestamp_error: {}'.format(e))
 
 
-def paged_search_computers(api=api, configuration=configuration, api_version=api_version, api_exception=None):
-    # https://github.com/deep-security/automation-center-sdk-samples/blob/master/python/src/search_examples.py
-    """ Uses a search filter to create a paged list of computers
-    :param api: The Deep Security API modules.
-    :param configuration: Configuration object to pass to the api client.
-    :param api_version: The version of the API to use.
-    :param api_exception: The Deep Security API exception module.
-    :return: A list of computer objects
-    """
-
-    # Set search criteria
-    search_criteria = api.SearchCriteria()
-    search_criteria.id_value = 0
-    search_criteria.id_test = "greater-than"
-
-    # Create a search filter with maximum returned items
- 
-    search_filter = api.SearchFilter()
-    search_filter.max_items = page_size
-    search_filter.search_criteria = [search_criteria]
-
-    # Include the minimum information in the returned Computer objects
-    expand = api.Expand(api.Expand.all)
-
-    # Perform the search and do work on the results
-    computers_api = api.ComputersApi(api.ApiClient(configuration))
-    paged_computers = []
-
-    while True:
-        computers = computers_api.search_computers(
-            api_version, search_filter=search_filter, expand=expand.list(), overrides=False)
-        num_found = len(computers.computers)
-        current_paged_computers = []
-        logging.info('paged_search_computers - listing with page size {}'.format(page_size))
-
-        if num_found == 0:
-            logging.info('paged_search_computers - No computers found.')
-            break
-
-        for computer in computers.computers:
-            logging.debug(computer)
-            current_paged_computers.append(computer)
-            paged_computers.append(computer)
-
-        # paged_computers.append(current_paged_computers)
-
-        # Get the ID of the last computer in the page and return it with the number of computers on the page
-        last_id = computers.computers[-1].id
-        search_criteria.id_value = last_id
-        logging.info("paged_search_computers - Last ID: {} Computers found: {}".format(str(last_id),
-                                                                                       str(num_found)))
-
-    return paged_computers
-
-
 def ds_summary():
     active = {}
     warning = {}
@@ -237,19 +188,15 @@ def ds_summary():
     ips_rules_unknown_total = 0
 
 
-    # api_instance = api.ComputersApi(api.ApiClient(configuration))
-    # overrides = False
-    # logging.info('ds_summary: calling ds api')
-    # api_response = api_instance.list_computers(
-    #     api_version, overrides=overrides)
-
-
+    api_instance = api.ComputersApi(api.ApiClient(configuration))
+    overrides = False
     logging.info('ds_summary: calling ds api')
-    computers = paged_search_computers()
+    api_response = api_instance.list_computers(
+        api_version, overrides=overrides)
 
 
     logging.info('ds_summary: metric calc')
-    for computer in computers:
+    for computer in api_response.computers:
         try:
             platform = computer.platform.lower()
             agent_status = computer.computer_status.agent_status.lower()
